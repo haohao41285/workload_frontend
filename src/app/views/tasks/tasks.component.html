@@ -1,0 +1,209 @@
+<div class="animated fadeIn">
+	<div class="row">
+    <div class="col-lg-12">
+		 <div class="card">
+        	<div class="card-body">
+        	  <form action="" method="post" class="form-inline">
+            	<div class="form-group mx-1">
+              		<label class="sr-only" for="if-email">From</label>
+              		<input type="date" id="if-email" name="if-email" class="form-control form-control-sm" placeholder="" autocomplete="email">
+            	</div>
+            	<div class="form-group mx-1">
+              		<label class="sr-only" for="if-password">To</label>
+             		 <input type="date" id="if-password" name="if-password" class="form-control form-control-sm" placeholder="" autocomplete="current-password">
+            	</div>
+            	<div class="form-group mx-1">
+              		<label class="sr-only" for="status">Status</label>
+             		 <select class="form-control form-control-sm" id="status">
+             		 	<option value="all">--ALL--</option>
+		                <option value="1">NEW</option>
+		                <option value="2">PROGRESSING</option>
+		                <option value="3">DONE</option>
+		                <option value="4">REOPEN</option>
+		              </select>
+            	</div>
+             		<button type="submit" class="btn btn-sm btn-primary mx-1"><i class="fa fa-dot-circle-o"></i> Search</button>
+          			<button type="reset" class="btn btn-sm btn-danger mx-1"><i class="fa fa-ban"></i> Reset</button>
+          	</form>
+        </div>
+    </div>
+      </div>
+	</div>
+</div>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> <b>Tasks</b>
+          <button type="reset" class="btn btn-sm btn-primary mx-1 float-right" (click)="infoModal.show()"  data-toggle="modal" ><i class="fa fa-plus-square"></i> New Task</button>
+        </div>
+        <div class="card-body">
+          <table class="table table-bordered table-striped table-hover table-sm">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th class="text-center">Estimate</th>
+                <th class="text-center">Deadline</th>
+                <th class="text-center">Finish</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Progressing(%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Vishnu Serghei</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">
+                  <span class="badge badge-success">Active</span>
+                </td>
+                <td class="text-center">100</td>
+              </tr>
+              <tr>
+                <td>Zbyněk Phoibos</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">2012/02/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">
+                  <span class="badge badge-danger">Banned</span>
+                </td>
+                <td class="text-center">50</td>
+              </tr>
+              <tr>
+                <td>Einar Randall</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">2012/02/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">
+                  <span class="badge badge-secondary">Inactive</span>
+                </td>
+                <td class="text-center">20</td>
+              </tr>
+              <tr>
+                <td>Félix Troels</td>
+                <td class="text-center">2012/03/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">
+                  <span class="badge badge-warning">Pending</span>
+                </td>
+                <td class="text-center">70</td>
+              </tr>
+              <tr>
+                <td>Aulus Agmundr</td>
+                <td class="text-center">2012/01/21</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">2012/01/01</td>
+                <td class="text-center">
+                  <span class="badge badge-success">Active</span>
+                </td>
+                <td class="text-center">100</td>
+              </tr>
+            </tbody>
+          </table>
+          <nav>
+          	<!-- <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls> -->
+            <ul class="pagination float-right">
+              <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+              <li class="page-item active">
+                <a class="page-link" href="#">1</a>
+              </li>
+              <li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item"><a class="page-link" href="#">4</a></li>
+              <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- app.component.html -->
+<!-- <div style="text-align:center">
+  <h4>
+    Customized Elements of Pagination
+  </h4>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Item</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of collection.data | paginate: config">
+        <th scope="row">{{item.id}}</th>
+        <td>{{item.value}}</td>
+      </tr>
+    </tbody>
+  </table> -->
+
+<!-- <pagination-controls 
+     [maxSize]="maxSize"
+     [directionLinks]="directionLinks"
+     [autoHide]="autoHide"
+     [responsive]="responsive"
+     [previousLabel]="Previous"
+     [nextLabel]="Next"
+     [screenReaderPaginationLabel]="Pagination"
+     [screenReaderPageLabel]="page"
+     [screenReaderCurrentLabel]="labels.screenReaderCurrentLabel"
+     (pageChange)="onPageChange($event)">
+</pagination-controls>
+ -->
+
+<!-- Modal new task -->
+<div bsModal #infoModal="bs-modal"  [config]="{backdrop: static}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modal title</h4>
+        <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card-body">
+          <div class="form-group">
+            <label for="company">Company</label>
+            <input type="text" class="form-control" id="company" placeholder="Enter your company name">
+          </div>
+          <div class="form-group">
+            <label for="vat">VAT</label>
+            <input type="text" class="form-control" id="vat" placeholder="PL1234567890">
+          </div>
+          <div class="form-group">
+            <label for="street">Street</label>
+            <input type="text" class="form-control" id="street" placeholder="Enter street name">
+          </div>
+          <div class="row">
+            <div class="form-group col-sm-8">
+              <label for="city">City</label>
+              <input type="text" class="form-control" id="city" placeholder="Enter your city">
+            </div>
+            <div class="form-group col-sm-4">
+              <label for="postal-code">Postal Code</label>
+              <input type="text" class="form-control" id="postal-code" placeholder="Postal Code">
+            </div>
+          </div><!--/.row-->
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" class="form-control" id="country" placeholder="Country name">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Close</button>
+        <button type="button" class="btn btn-info">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End modal new task -->
+
+

@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 
+//add
+import { first } from 'rxjs/operators';
+import { User } from '../../_models/user';
+import { UserService } from '../../_services/user.service';
+// import { AuthenticationService } from '../../_services/authentication.service';
+//end add
+
 @Component({
   templateUrl: 'dashboard.component.html'
 })
@@ -377,7 +384,16 @@ export class DashboardComponent implements OnInit {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
+  //add 
+
+  // users:User[];
+  
+  // constructor(private userService:UserService){}
+
   ngOnInit(): void {
+    // this.userService.getAll().pipe(first()).subscribe(users=>{
+      // this.users = users;
+    // });
     // generate random values for mainChart
     for (let i = 0; i <= this.mainChartElements; i++) {
       this.mainChartData1.push(this.random(50, 200));

@@ -9,7 +9,9 @@ import { Router, NavigationEnd } from '@angular/router';
 export class AppComponent implements OnInit {
   constructor(private router: Router) { }
 
+
   ngOnInit() {
+
     this.router.events.subscribe((evt) => {
       if (!(evt instanceof NavigationEnd)) {
         return;

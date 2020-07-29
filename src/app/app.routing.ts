@@ -8,11 +8,16 @@ import { P404Component } from './views/error/404.component';
 import { P500Component } from './views/error/500.component';
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
+import { LogoutComponent } from './views/logout/logout.component';
+
+//Import AuthGuard
+import { AuthGuard } from './_helpers/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'dashboard',
+    canActivate: [AuthGuard],
     pathMatch: 'full',
   },
   {
@@ -49,6 +54,7 @@ export const routes: Routes = [
     data: {
       title: 'Home'
     },
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'base',
@@ -81,7 +87,16 @@ export const routes: Routes = [
       {
         path: 'widgets',
         loadChildren: () => import('./views/widgets/widgets.module').then(m => m.WidgetsModule)
-      }
+      },
+      {
+        path: 'tasks',
+        loadChildren: () => import('./views/tasks/tasks.module').then(m => m.TasksModule)
+      },
+      {
+        path: 'reports',
+        loadChildren: () => import('./views/reports/reports.module').then(m => m.ReportsModule)
+      },
+      { path: 'logout', component: LogoutComponent}
     ]
   },
   { path: '**', component: P404Component }

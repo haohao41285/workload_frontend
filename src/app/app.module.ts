@@ -7,11 +7,15 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
 };
 
 import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
+// import { NgxPaginationModule } from 'ngx-pagination';
 
 // Import containers
 import { DefaultLayoutComponent } from './containers';
@@ -31,6 +35,7 @@ import {
   AppHeaderModule,
   AppFooterModule,
   AppSidebarModule,
+  // NgxPaginationModule 
 } from '@coreui/angular';
 
 // Import routing module
@@ -40,6 +45,10 @@ import { AppRoutingModule } from './app.routing';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
+import { LogoutComponent } from './views/logout/logout.component';
+
+//Import Alert Toastr
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   imports: [
@@ -54,7 +63,11 @@ import { ChartsModule } from 'ng2-charts';
     PerfectScrollbarModule,
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
-    ChartsModule
+    ChartsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    ToastrModule.forRoot(),
   ],
   declarations: [
     AppComponent,
@@ -62,7 +75,8 @@ import { ChartsModule } from 'ng2-charts';
     P404Component,
     P500Component,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    LogoutComponent
   ],
   providers: [{
     provide: LocationStrategy,

@@ -190,6 +190,16 @@ export const navItems: INavData[] = [
     }
   },
   {
+    name: 'Reports',
+    url: '/reports',
+    icon: 'icon-notebook',
+  },
+  {
+    name: 'Tasks',
+    url: '/tasks',
+    icon: 'icon-note',
+  },
+  {
     divider: true
   },
   {
