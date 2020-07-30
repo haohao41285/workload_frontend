@@ -36,7 +36,7 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> <b>Tasks</b>
-          <button type="reset" class="btn btn-sm btn-primary mx-1 float-right" (click)="infoModal.show()"  data-toggle="modal" ><i class="fa fa-plus-square"></i> New Task</button>
+          <button type="reset" class="btn btn-sm btn-primary mx-1 float-right" (click)="infoModal.show()" (click)="getAllList()"  data-toggle="modal" ><i class="fa fa-plus-square"></i> New Task</button>
         </div>
         <div class="card-body">
           <table class="table table-bordered table-striped table-hover table-sm">
@@ -158,49 +158,48 @@
  -->
 
 <!-- Modal new task -->
-<div bsModal #infoModal="bs-modal"  [config]="{backdrop: static}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-info modal-dialog-scrollable" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Modal title</h4>
+        <h4 class="modal-title">Add New Task</h4>
         <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        <div class="card-body">
-          <div class="form-group">
-            <label for="company">Company</label>
-            <input type="text" class="form-control" id="company" placeholder="Enter your company name">
-          </div>
-          <div class="form-group">
-            <label for="vat">VAT</label>
-            <input type="text" class="form-control" id="vat" placeholder="PL1234567890">
-          </div>
-          <div class="form-group">
-            <label for="street">Street</label>
-            <input type="text" class="form-control" id="street" placeholder="Enter street name">
-          </div>
-          <div class="row">
-            <div class="form-group col-sm-8">
-              <label for="city">City</label>
-              <input type="text" class="form-control" id="city" placeholder="Enter your city">
+      <form [formGroup]="cardForm" (ngSubmit)="createCard()">
+        <div class="modal-body">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
             </div>
-            <div class="form-group col-sm-4">
-              <label for="postal-code">Postal Code</label>
-              <input type="text" class="form-control" id="postal-code" placeholder="Postal Code">
+            <div class="form-group">
+              <label for="date_expired">Date Expired</label>
+              <input type="date" class="form-control form-control-sm" formControlName="expired_date" id="date_expired" required>
             </div>
-          </div><!--/.row-->
-          <div class="form-group">
-            <label for="country">Country</label>
-            <input type="text" class="form-control" id="country" placeholder="Country name">
+            <div class="form-group">
+              <label for="assign">Assign</label>
+              <select class="form-control form-control-sm" formControlName="assign" multiple>
+                <option value="1">thieu.nguyen</option>
+                <option value="2">hieu.do</option>
+              </select>
+            </div>
+            <div class="row">
+              <div class="form-group col-sm-8">
+                <label for="idList">List</label>
+                <select name="list" formControlName="idList" class="form-control form-control-sm">
+                  <option *ngFor="let l of list" value="{{l.id}}">{{l.name}}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Close</button>
-        <button type="button" class="btn btn-info">Save changes</button>
-      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Close</button>
+          <button type="submit" [disabled]="!cardForm.valid" class="btn btn-info">Add</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
