@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-// import { NgxPaginationModule } from 'ngx-pagination';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 import { TasksComponent } from './tasks.component';
@@ -15,10 +16,11 @@ import { TasksRoutingModule } from './tasks-routing.module';
   imports: [
     CommonModule,
     TasksRoutingModule,
-    // NgxPaginationModule,
+    NgxPaginationModule,
     ModalModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TooltipModule.forRoot()
   ]
 })
 export class TasksModule { }

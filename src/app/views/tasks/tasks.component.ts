@@ -7,6 +7,7 @@ import { formatDate,Location } from '@angular/common';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { TrelloService } from '../../_services/trello.service';
+import { TaskService } from '../../_services/task.service';
 
 @Component({
   selector: 'app-tasks',
@@ -26,11 +27,12 @@ export class TasksComponent implements OnInit {
 	}
 
 	cardForm: FormGroup;
+	searchForm : FormGroup;
 	list: any;
 	data: any;
-
+	tasks : any;
   	config: any;
-  	collection = { count: 60, data: [] };
+
 
   	private SUCCESS_ALERT = "Successfully!";
   	private ERROR_ALERT = "Failed!";
@@ -41,22 +43,13 @@ export class TasksComponent implements OnInit {
  		private router: Router,
  		private toastrService: ToastrService,
  		private formBuilder: FormBuilder,
- 		private _location: Location
+ 		private _location: Location,
+ 		private taskService: TaskService
 
- 	){ 
- 		for(var i = 0; i < this.collection.count; i++){
-	  	this.collection.data.push(
-			  	{
-			  		id: i +1,
-			  		value: "items number " + ( i +1 )
-			  	}
-		  	);
-		}
-
+ 	){
 		this.config = {
-			itemsPerPage: 5,
+			itemsPerPage: 10,
 			currentPage: 1,
-			totalItems: this.collection.count
 		};
 	}
 
@@ -68,14 +61,19 @@ export class TasksComponent implements OnInit {
   			idList : ['',Validators.required]
 
   		});
-  		console.log(formatDate(new Date(), 'dd/MM/yyyy', 'en'));
+  		this.searchForm = this.formBuilder.group({
+  			from : ['', Validators.required],
+  			to: ['', Validators.required],
+  			status: ['all']
+  		});
+  		this.gettask();
   	}
 
 	pageChanged(event){
 		this.config.currentPage = event;
 	}
 
-	//Cards
+	//Cards function
 	// get f() { return this.cardForm.controls; }
 
 	getAllList(){
@@ -89,8 +87,6 @@ export class TasksComponent implements OnInit {
 	}
 	//Create New Cards
 	createCard(){
-
-		// console.log(this.cardForm.value);return;
 
 		if(this.cardForm.invalid){
 			return;
@@ -113,4 +109,50 @@ export class TasksComponent implements OnInit {
 		);
 	}
 
+	// Get task's(card) user on database
+	gettask(){
+		var id_user = JSON.parse(localStorage.getItem('currentUser'))['id'];
+
+		this.taskService.getUserTask(id_user)
+		.subscribe(
+			res => {
+				if(res.status === 'error'){
+					this.toastrService.error(res.status,res.message);
+					return;
+				}
+				this.tasks = res;
+				console.log(this.tasks);
+
+			},
+			error => {
+				this.toastrService.error("",this.ERROR_ALERT);
+			}
+		)
+	}
+	//Search task
+	searchTask(){
+		var data_search = this.searchForm.value;
+		data_search.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
+		data_search.token = localStorage.getItem('currentToken');
+		this.taskService.searchTask(data_search)
+		.subscribe(
+			res=>{
+				console.log(res);return;
+				if(res.status == "error"){
+					this.toastrService.error(res.status,res.message);
+					return;
+				}
+				this.tasks = res;
+				console.log(res);
+				this._location.forward();
+			},
+			error=>{
+				this.toastrService.error("Error",this.ERROR_ALERT);
+			}
+		)
+	}
+
+	resetForm(){
+		this.searchForm.reset();
+	}
 }
