@@ -13,7 +13,7 @@ import { AuthenticationService } from '../../_services/authentication.service';
 })
 export class LoginComponent implements OnInit {
     loginForm: FormGroup;
-    loading = false;
+    // loading = false;
     submitted = false;
     returnUrl: string;
     error = '';
@@ -36,13 +36,21 @@ export class LoginComponent implements OnInit {
             username: ['', Validators.required],
             password: ['', Validators.required]
         });
-
-        // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.getQueryParams()
     }
 
     // convenience getter for easy access to form fields
     get f() { return this.loginForm.controls; }
+
+    getQueryParams(){
+        var params = this.route.snapshot.queryParams['returnUrl'];
+        if(params == null || params == "" || params == '/logout'){
+            this.returnUrl = '/';
+        }
+        else{
+            this.returnUrl = params;
+        }
+    }
 
     onSubmit() {
         this.submitted = true;
@@ -51,20 +59,25 @@ export class LoginComponent implements OnInit {
             return;
         }
 
-        this.loading = true;
+        // this.loading = true;
         this.authenticationService.login(this.f.username.value, this.f.password.value)
             .pipe(first())
             .subscribe(
                 data => {
-                	if(data.status === 'error'){
-                		this.toastrService.error(data.status,data.msg);
+                	if(data['status'] === 'error'){
+                		this.toastrService.error(data['status'],data['msg']);
                 		return;
                 	}
                     this.router.navigate([this.returnUrl]);
                 },
                 error => {
                     this.error = error;
-                    this.loading = false;
+                    if(error['ok'] && error['ok'] == false){
+                        this.toastrService.warning('error','Connection Internet Failed!');
+                    }else{
+                        this.toastrService.warning('error','Connection Failed');
+                    }
+                    // this.loading = false;
                 });
     }
 }

@@ -109,15 +109,15 @@ export class TasksComponent implements OnInit {
 		);
 	}
 
-	// Get task's(card) user on database
+	// Get task's(card in trello ) user on database
 	gettask(){
 		var id_user = JSON.parse(localStorage.getItem('currentUser'))['id'];
 
 		this.taskService.getUserTask(id_user)
 		.subscribe(
 			res => {
-				if(res.status === 'error'){
-					this.toastrService.error(res.status,res.message);
+				if(res['status'] === 'error'){
+					this.toastrService.error(res['status'],res['message']);
 					return;
 				}
 				this.tasks = res;

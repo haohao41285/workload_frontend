@@ -102,6 +102,13 @@
       <form [formGroup]="cardForm" (ngSubmit)="createCard()">
         <div class="modal-body">
           <div class="card-body">
+             <div class="form-group">
+              <label for="assign">Trello Board</label>
+              <select class="form-control form-control-sm" >
+                <option value="1">INTERNAL</option>
+                <option value="2">Test</option>
+              </select>
+            </div>
             <div class="form-group">
               <label for="name">Name</label>
               <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
