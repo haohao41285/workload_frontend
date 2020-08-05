@@ -96,6 +96,10 @@ export const routes: Routes = [
         path: 'reports',
         loadChildren: () => import('./views/reports/reports.module').then(m => m.ReportsModule)
       },
+      {
+        path: 'trello-board',
+        loadChildren: () => import('./views/boards/boards.module').then(m => m.BoardsModule)
+      },
       { path: 'logout', component: LogoutComponent}
     ]
   },

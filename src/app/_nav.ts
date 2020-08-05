@@ -190,14 +190,19 @@ export const navItems: INavData[] = [
     }
   },
   {
+    name: 'Tasks',
+    url: '/tasks',
+    icon: 'icon-note',
+  },
+  {
     name: 'Reports',
     url: '/reports',
     icon: 'icon-notebook',
   },
   {
-    name: 'Tasks',
-    url: '/tasks',
-    icon: 'icon-note',
+    name: 'Trello Board',
+    url: '/trello-board',
+    icon: 'icon-grid',
   },
   {
     divider: true

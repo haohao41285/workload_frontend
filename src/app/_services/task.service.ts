@@ -15,7 +15,7 @@ export class TaskService {
   	) { }
 
   	public getUserTask(id: number){
-  		return this.http.get(`${environment.apiUrl}/api/task/`+id)
+  		return this.http.get(`${environment.apiUrl}/task/`+id)
   		.pipe(map(res=>{
   			return res;
   		}))
@@ -28,9 +28,28 @@ export class TaskService {
 	            // 'Content-Type': 'multipart/form-data'
 	        })
 	    };
-	    return this.http.post<any>(`${environment.apiUrl}/api/task-search`,data_search,httpOptions)
+	    return this.http.post<any>(`${environment.apiUrl}/task-search`,data_search,httpOptions)
 	    .pipe(map(res=>{
 	    	return res;
 	    }))
   	}
+
+    getBoardTrello(){
+      return this.http.get(`${environment.apiUrl}/board`)
+      .pipe(map(res=>{
+         return res;
+      }))
+    }
+
+    createNewBoard(url){
+      const httpOptions = {
+        headers: new HttpHeaders({
+         'Content-Type' : 'application/json'
+        })
+      };
+      return this.http.post<any>(`${environment.apiUrl}/board/`,url,httpOptions)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
 }

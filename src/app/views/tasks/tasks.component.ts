@@ -109,7 +109,7 @@ export class TasksComponent implements OnInit {
 		);
 	}
 
-	// Get task's(card) user on database
+	// Get task's(card in trello ) user on database
 	gettask(){
 		var id_user = JSON.parse(localStorage.getItem('currentUser'))['id'];
 

@@ -12,8 +12,8 @@ export class DefaultLayoutComponent implements OnInit{
   user = JSON.parse(localStorage.getItem('currentUser'));
 
   ngOnInit() {
-  	console.log(localStorage.getItem('currentUser'));  // return user object save in localstorage
-  	console.log(localStorage.getItem('currentToken')); //  return token save in local
+  	// console.log(localStorage.getItem('currentUser'));  // return user object save in localstorage
+  	// console.log(localStorage.getItem('currentToken')); //  return token save in local
   }
 
   
