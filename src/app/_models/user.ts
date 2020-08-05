@@ -4,5 +4,6 @@ export interface User {
 	password: string,
 	firstName: string,
 	lastName: string,
-	token?:string
+	token?:string,
+	email: string
 }

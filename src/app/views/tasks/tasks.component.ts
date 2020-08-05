@@ -116,8 +116,8 @@ export class TasksComponent implements OnInit {
 		this.taskService.getUserTask(id_user)
 		.subscribe(
 			res => {
-				if(res.status === 'error'){
-					this.toastrService.error(res.status,res.message);
+				if(res['status'] === 'error'){
+					this.toastrService.error(res['status'],res['message']);
 					return;
 				}
 				this.tasks = res;
