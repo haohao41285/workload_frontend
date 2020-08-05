@@ -21,7 +21,7 @@ export class AuthenticationService {
     }
 
     login(email: string, password: string) {
-        return this.http.post<any>(`${environment.apiUrl}/api/login`, { email, password })
+        return this.http.post<any>(`${environment.apiUrl}/login`, { email, password })
             .pipe(map(user => {
                 if(user.status == 'error'){
                     return user;
@@ -34,7 +34,7 @@ export class AuthenticationService {
             }));
     }
     register(email: string, name: string, password: string) {
-        return this.http.post<any>(`${environment.apiUrl}/api/signup`, {email, name, password})
+        return this.http.post<any>(`${environment.apiUrl}/signup`, {email, name, password})
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 if(user.status == 'error'){

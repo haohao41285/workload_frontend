@@ -24,9 +24,9 @@ export class RegisterComponent {
         private authenticationService: AuthenticationService
     ) { 
         // redirect to home if already logged in
-        if (this.authenticationService.currentUserValue) { 
-            this.router.navigate(['/']);
-        }
+        // if (this.authenticationService.currentUserValue) { 
+        //     this.router.navigate(['/']);
+        // }
     }
 
     get f() { return this.registerForm.controls; }
