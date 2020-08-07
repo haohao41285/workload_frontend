@@ -4,12 +4,59 @@
 		 <div class="card">
         	<div class="card-body">
         	  <form [formGroup]="searchForm" (ngSubmit)="searchTask()" class="form-inline">
-            	<div class="form-group mx-1">
-              		<input type="date" formControlName="to" class="form-control form-control-sm">
-            	</div>
-            	<div class="form-group mx-1">
-             		 <input type="date" formControlName="from" class="form-control form-control-sm">
-            	</div>
+              <div class="form-group mx-1">
+                <input type="text" class="form-control form-control-sm" placeholder="Enter Title" formControlName="name">
+              </div>
+            	<div class="form-group hidden">
+                <div class="input-group">
+                  <input name="datepicker"
+                         class="form-control form-control-sm"
+                         ngbDatepicker
+                         #datepicker="ngbDatepicker"
+                         [autoClose]="'outside'"
+                         (dateSelect)="onDateSelection($event)"
+                         [displayMonths]="2"
+                         [dayTemplate]="t"
+                         outsideDays="hidden"
+                         [startDate]="fromDate!">
+                  <ng-template #t let-date let-focused="focused">
+                    <span class="custom-day"
+                          [class.focused]="focused"
+                          [class.range]="isRange(date)"
+                          [class.faded]="isHovered(date) || isInside(date)"
+                          (mouseenter)="hoveredDate = date"
+                          (mouseleave)="hoveredDate = null">
+                      {{ date.day }}
+                    </span>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group">
+                  <input #dpFromDate
+                         class="form-control form-control-sm" placeholder="yyyy-mm-dd"
+                         
+                         formControlName="from"
+                         [value]="formatter.format(fromDate)"
+                         (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar fa fa-calendar btn-sm" (click)="datepicker.toggle()" type="button"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group ml-2">
+                <div class="input-group">
+                  <input #dpToDate
+                         class="form-control form-control-sm" placeholder="yyyy-mm-dd"
+                        
+                         formControlName="to"
+                         [value]="formatter.format(toDate)"
+                         (input)="toDate = validateInput(toDate, dpToDate.value)">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar fa fa-calendar btn-sm" (click)="datepicker.toggle()" type="button"></button>
+                  </div>
+                </div>
+              </div>
             	<div class="form-group mx-1">
              		 <select class="form-control form-control-sm" formControlName="status">
              		 	<option value="all">--ALL--</option>
@@ -19,8 +66,8 @@
 		                <option value="4">REOPEN</option>
 		              </select>
             	</div>
-             		<button type="submit" [disabled]="!searchForm.valid" class="btn btn-sm btn-primary mx-1"><i class="fa fa-dot-circle-o"></i> Search</button>
-          			<button type="reset" [disabled]="!searchForm.valid" (click)="resetForm()" class="btn btn-sm btn-danger mx-1"><i class="fa fa-ban"></i> Reset</button>
+             		<button type="submit"  [disabled]="!searchForm.valid" class="btn btn-sm btn-primary mx-1"><i class="fa fa-search"></i> Search</button>
+          			<button type="button" [disabled]="!searchForm.valid" (click)="resetForm()" class="btn btn-sm btn-danger mx-1"><i class="fa fa-refresh"></i> Reset</button>
           	</form>
         </div>
     </div>
@@ -33,54 +80,51 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> <b>Tasks</b>
-          <button type="reset" class="btn btn-sm btn-primary mx-1 float-right" (click)="infoModal.show()" (click)="getAllList()"  data-toggle="modal" ><i class="fa fa-plus-square"></i> New Task</button>
+          <button type="reset" class="btn btn-sm btn-primary mx-1 float-right" (click)="infoModal.show()" (click)="getAllListBoard()"  data-toggle="modal" ><i class="fa fa-plus-square"></i> New Task</button>
         </div>
         <div class="card-body">
-          <table class="table table-bordered table-striped table-hover table-sm">
-            <thead>
-              <tr class="thead-dark">
-                <th>Title</th>
-                <th class="text-center">Datestart</th>
-                <th class="text-center">Deadline</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Progressing(%)</th>
-                <th class="text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of tasks | paginate: config">
-                <td>{{item.task.name}}</td>
-                <td class="text-center">{{item.task.date_start}}</td>
-                <td class="text-center">{{item.task.due}}</td>
-                <td class="text-center">
-                    <span  *ngIf="item.status == 0" class="badge badge-success">NEW</span>
-                    <span  *ngIf="item.status == 1" class="badge badge-warning">PROGRESSING</span>
-                    <span  *ngIf="item.status == 2" class="badge badge-danger">DONE</span>
-                    <span  *ngIf="item.status == 3" class="badge badge-secondary">REOPEN</span>
-                </td>
-                <td class="text-center">{{item.progressing}}</td>
-                <td class="text-center">
-                  <a href=""><span tooltip="Edit" class="fa fa-edit "></span></a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <nav>
-             <div class="float-right">
-               <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
-             </div>
-          	
-            <!-- <ul class="pagination float-right">
-              <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-              <li class="page-item active">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">4</a></li>
-              <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul> -->
-          </nav>
+          <ngx-datatable class="bootstrap" [rows]="tasks" [limit]="10" [columnMode]="'force'"
+          [headerHeight]="50" [footerHeight]="50" [rowHeight]="50"
+          >
+
+          <ngx-datatable-column name="Title">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+             {{row.task.name}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Date Start">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+             {{row.task.date_start}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Deadline">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+             {{row.task.due}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Status">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span  *ngIf="row.status == 1" class="badge badge-success">NEW</span>
+              <span  *ngIf="row.status == 2" class="badge badge-warning">PROGRESSING</span>
+              <span  *ngIf="row.status == 3" class="badge badge-danger">DONE</span>
+              <span  *ngIf="row.status == 4" class="badge badge-secondary">REOPEN</span>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Progressing">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+             {{row.progressing}}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Action">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+             <a href="javascript:void(0)"><span tooltip="Edit" class="fa fa-edit "></span></a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- <ngx-datatable-column name="Gender">
+          </ngx-datatable-column> -->
+        </ngx-datatable>
         </div>
       </div>
     </div>
@@ -91,52 +135,83 @@
 
 <!-- Modal new task -->
 <div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-info modal-dialog-scrollable" role="document">
+  <div class="modal-dialog modal-info" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header py-1">
         <h4 class="modal-title">Add New Task</h4>
         <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <form [formGroup]="cardForm" (ngSubmit)="createCard()">
-        <div class="modal-body">
+        <div class="modal-body px-1 py-1">
           <div class="card-body">
-             <div class="form-group">
-              <label for="assign">Trello Board</label>
-              <select class="form-control form-control-sm" >
-                <option value="1">INTERNAL</option>
-                <option value="2">Test</option>
+             <div class="form-group my-1">
+              <label for="assign required">Trello Board</label>
+              <select class="form-control form-control-sm" (change)="getList()" formControlName="idBoard">
+                <option *ngFor="let b of board" value="{{b.id}}">{{b.name}}</option>
               </select>
             </div>
-            <div class="form-group">
-              <label for="name">Name</label>
+            <div class="form-group my-1">
+              <label for="idList required">List</label>
+              <select name="list" formControlName="idList" class="form-control form-control-sm">
+                <option *ngFor="let l of list" value="{{l.idList}}">{{l.name}}</option>
+              </select>
+            </div>
+            <div class="form-group my-1">
+              <label for="name required">Title</label>
               <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
             </div>
-            <div class="form-group">
-              <label for="date_expired">Date Expired</label>
-              <input type="date" class="form-control form-control-sm" formControlName="expired_date" id="date_expired" required>
+            <div class="form-group my-1">
+              <label for="date_start required">Date Start</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <ngb-timepicker formControlName="time_start" ></ngb-timepicker>
+                </div>
+                <div class="col-md-8">
+                   <div class="input-group">
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                          formControlName="start_date" ngbDatepicker #ds="ngbDatepicker">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary fa fa-calendar calendar" (click)="ds.toggle()" type="button"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
+            <div class="form-group my-1">
+              <label for="date_expired required">Deadline</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <ngb-timepicker formControlName="time_end" ></ngb-timepicker>
+                </div>
+                <div class="col-md-8">
+                   <div class="input-group">
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                          formControlName="expired_date" ngbDatepicker #d="ngbDatepicker">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary fa fa-calendar calendar" (click)="d.toggle()" type="button"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group my-1">
               <label for="assign">Assign</label>
               <select class="form-control form-control-sm" formControlName="assign" multiple>
                 <option value="1">thieu.nguyen</option>
                 <option value="2">hieu.do</option>
               </select>
             </div>
-            <div class="row">
-              <div class="form-group col-sm-8">
-                <label for="idList">List</label>
-                <select name="list" formControlName="idList" class="form-control form-control-sm">
-                  <option *ngFor="let l of list" value="{{l.id}}">{{l.name}}</option>
-                </select>
-              </div>
+            <div class="form-group my-1">
+              <label for="desc">Description</label>
+              <textarea class="form-control form-control-sm" id="desc" formControlName="desc" rows="3"></textarea>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="infoModal.hide()">Close</button>
-          <button type="submit" [disabled]="!cardForm.valid" class="btn btn-info">Add</button>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-danger btn-sm" (click)="infoModal.hide()">Close</button>
+          <button type="submit" [disabled]="!cardForm.valid"  class="btn btn-primary btn-sm">Add</button>
         </div>
       </form>
     </div>

@@ -34,22 +34,31 @@ export class TaskService {
 	    }))
   	}
 
-    getBoardTrello(){
-      return this.http.get(`${environment.apiUrl}/board`)
-      .pipe(map(res=>{
-         return res;
-      }))
-    }
-
-    createNewBoard(url){
+    public createTask(data){
       const httpOptions = {
         headers: new HttpHeaders({
-         'Content-Type' : 'application/json'
-        })
+              'Content-Type':  'application/json',
+              // 'Content-Type': 'multipart/form-data'
+          })
       };
-      return this.http.post<any>(`${environment.apiUrl}/board/`,url,httpOptions)
-      .pipe(map(res=>{
-        return res;
-      }))
+      return this.http.post<any>(`${environment.apiUrl}/task`,data,httpOptions)
+              .pipe(map(res=>{
+                return res;
+              }))
     }
+
+    //Dashboard
+    public searchTaskTotal(data){
+       const httpOptions = {
+        headers: new HttpHeaders({
+              'Content-Type':  'application/json',
+              // 'Content-Type': 'multipart/form-data'
+          })
+      };
+      return this.http.post<any>(`${environment.apiUrl}/task-total`,data,httpOptions)
+              .pipe(map(res=>{
+                return res;
+              }))
+    }
+
 }

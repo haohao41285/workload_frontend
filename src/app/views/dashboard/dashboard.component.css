@@ -21,10 +21,3 @@
 .custom-day.faded {
   background-color: rgba(2, 117, 216, 0.5);
 }
-label{
-  font-weight: bold;
-}
-.required::after{
-   color: red;
-   content: '*';
-}

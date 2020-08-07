@@ -5,14 +5,18 @@ import { first,map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { formatDate,Location } from '@angular/common';
 import { ModalDirective } from 'ngx-bootstrap/modal';
+import {NgbDate, NgbCalendar, NgbDateParserFormatter,NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import {NgbTimeStruct,NgbTimepickerConfig} from '@ng-bootstrap/ng-bootstrap';
 
 import { TrelloService } from '../../_services/trello.service';
 import { TaskService } from '../../_services/task.service';
+import { BoardService } from '../../_services/board.service';
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
-  styleUrls: ['./tasks.component.css']
+  styleUrls: ['./tasks.component.css'],
+  providers: [NgbTimepickerConfig] 
 })
 export class TasksComponent implements OnInit {
 	@ViewChild('infoModal') public infoModal:ModalDirective;
@@ -29,9 +33,17 @@ export class TasksComponent implements OnInit {
 	cardForm: FormGroup;
 	searchForm : FormGroup;
 	list: any;
+	board: any;
 	data: any;
 	tasks : any;
   	config: any;
+  	list_arr: any;
+  	time: NgbTimeStruct = {hour: 11, minute: 30, second: 0};
+
+  	hoveredDate: NgbDate | null = null;
+
+	fromDate: NgbDate | null;
+	toDate: NgbDate | null;
 
 
   	private SUCCESS_ALERT = "Successfully!";
@@ -44,29 +56,51 @@ export class TasksComponent implements OnInit {
  		private toastrService: ToastrService,
  		private formBuilder: FormBuilder,
  		private _location: Location,
- 		private taskService: TaskService
+ 		private taskService: TaskService,
+ 		private calendar: NgbCalendar,
+ 		public formatter: NgbDateParserFormatter,
+ 		config: NgbTimepickerConfig,
+ 		private boardService: BoardService,
 
  	){
 		this.config = {
 			itemsPerPage: 10,
 			currentPage: 1,
 		};
+    	config.seconds = false;
+    	config.spinners = false;
+    	this.setFromToDate();
 	}
 
   	ngOnInit(): void {
   		this.cardForm = this.formBuilder.group({
   			name : ['',Validators.required],
-  			expired_date : [formatDate(new Date(), 'dd/MM/yyyy', 'en'),Validators.required],
+  			expired_date : [this.calendar.getNext(this.calendar.getToday(), 'd', 3),Validators.required],
   			assign : [''],
-  			idList : ['',Validators.required]
-
+  			idList : ['',Validators.required],
+  			desc : [''],
+  			time_start : [this.time],
+  			time_end : [this.time],
+  			idBoard : ['',Validators.required],
+  			start_date : [this.calendar.getToday(),Validators.required],
   		});
+  		this.createSearchForm();
+  		// this.gettask();
+  		this.searchTask();
+  	}
+
+  	setFromToDate(){
+		this.fromDate = this.calendar.getPrev(this.calendar.getToday(), 'd', 30);
+    	this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 5);
+  	}
+
+  	createSearchForm(){
   		this.searchForm = this.formBuilder.group({
-  			from : ['', Validators.required],
-  			to: ['', Validators.required],
+  			name : [''],
+  			from : [this.formatter.format(this.fromDate), Validators.required],
+  			to: [this.formatter.format(this.toDate), Validators.required],
   			status: ['all']
   		});
-  		this.gettask();
   	}
 
 	pageChanged(event){
@@ -76,32 +110,84 @@ export class TasksComponent implements OnInit {
 	//Cards function
 	// get f() { return this.cardForm.controls; }
 
-	getAllList(){
-		this.trelloService.getAlList()
+	getAllListBoard(){
+		var data_board = {
+			'id_board' : localStorage.getItem('id_board') || "",
+		};
+		this.boardService.getBoardTrello()
 		.subscribe(
-			res=> {
-				this.list = res;
-				console.log(res);
+			res => {
+				this.board = res['boards'];
+				this.list_arr = res['lists'];
+				var idBoard = res['boards'][0]['id'];
+				this.cardForm.get('idBoard').setValue(idBoard);
+				this.list = res['lists'][idBoard];
+			},
+			error => {
+				console.log('error');
 			}
-		);
+		)
+	}
+	getList(){
+		this.list = this.list_arr[this.cardForm.get('idBoard').value];
 	}
 	//Create New Cards
 	createCard(){
 
+		// console.log(this.cardForm.value);return false;
+
 		if(this.cardForm.invalid){
 			return;
 		}
-		this.data = this.cardForm.value;
-		this.data.due = formatDate(new Date(), 'yyyy-MM-dd', 'en');
 
+		// Format date time start/due
+		this.data = this.cardForm.value;
+		var time_start = this.cardForm.get('time_start').value.hour 
+						+ ":"+this.cardForm.get('time_start').value.minute;
+		var time_end = this.cardForm.get('time_end').value.hour 
+						+ ":"+this.cardForm.get('time_end').value.minute;
+		var start_date = this.formatter.format(this.cardForm.get('start_date').value);
+		var end_date = formatDate(this.formatter.format(this.cardForm.get('expired_date').value),'yyy/MM/dd','en');
+		this.data.date_start = start_date+" "+time_start;
+		this.data.due = end_date+" "+time_end+":00";
+		this.data.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
+		// console.log(this.data.due);return;
+
+		//Push task to card Trello
 		this.trelloService.createCard(this.data)
+		.subscribe(
+			res => {
+				this.data.id_trello = res.id;
+				this.saveDatabase();
+				// console.log(res);
+			},
+			error => {
+				this.toastrService.error('',"Error");
+				return;
+			}
+			);
+		console.log(this.data);
+
+		
+	}
+
+	saveDatabase(){
+		//Save data
+		this.taskService.createTask(this.data)
 		.pipe()
 		.subscribe(
 			res=> {
 				console.log(res);
-				this.toastrService.success('',this.SUCCESS_ALERT);
-				this._location.forward();
-				this.hideChildModal();
+				if(res['status'] == 'success'){
+					this.toastrService.success('',this.SUCCESS_ALERT);
+					this.hideChildModal();
+					// this.gettask();
+					this.searchTask();
+					this._location.forward();
+				}else{
+					this.toastrService.error('',this.ERROR_ALERT);
+					return;
+				}
 			},
 			error=> {
 				this.toastrService.error('',this.ERROR_ALERT);
@@ -132,19 +218,21 @@ export class TasksComponent implements OnInit {
 	//Search task
 	searchTask(){
 		var data_search = this.searchForm.value;
+		// console.log(data_search);return;
 		data_search.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
 		data_search.token = localStorage.getItem('currentToken');
+
 		this.taskService.searchTask(data_search)
 		.subscribe(
 			res=>{
-				console.log(res);return;
+				// console.log(res);return;
 				if(res.status == "error"){
 					this.toastrService.error(res.status,res.message);
 					return;
 				}
 				this.tasks = res;
 				console.log(res);
-				this._location.forward();
+				// this._location.forward();
 			},
 			error=>{
 				this.toastrService.error("Error",this.ERROR_ALERT);
@@ -153,6 +241,42 @@ export class TasksComponent implements OnInit {
 	}
 
 	resetForm(){
-		this.searchForm.reset();
+    	this.setFromToDate();
+    	this.searchForm.get('name').setValue("");
+	    this.searchForm.get('to').setValue(this.formatter.format(this.toDate));
+	    this.searchForm.get('from').setValue(this.formatter.format(this.fromDate));
+	    this.searchForm.get('status').setValue('all');
+	    this.searchTask();
+	}
+
+	onDateSelection(date: NgbDate) {
+	    if (!this.fromDate && !this.toDate) {
+	      this.fromDate = date;
+	      this.searchForm.get('from').setValue(this.formatter.format(this.fromDate));
+	    } else if (this.fromDate && !this.toDate && date && date.after(this.fromDate)) {
+	      this.toDate = date;
+	      this.searchForm.get('to').setValue(this.formatter.format(this.toDate));
+	    } else {
+	      this.toDate = null;
+	      this.fromDate = date;
+	      this.searchForm.get('from').setValue(this.formatter.format(this.fromDate));
+	    }
+	}
+
+	isHovered(date: NgbDate) {
+	    return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
+	}
+
+	isInside(date: NgbDate) {
+	    return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
+	}
+
+	isRange(date: NgbDate) {
+	    return date.equals(this.fromDate) || (this.toDate && date.equals(this.toDate)) || this.isInside(date) || this.isHovered(date);
+	}
+
+	validateInput(currentValue: NgbDate | null, input: string): NgbDate | null {
+	    const parsed = this.formatter.parse(input);
+	    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
 	}
 }

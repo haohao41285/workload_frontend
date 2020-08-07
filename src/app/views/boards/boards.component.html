@@ -38,7 +38,7 @@
                 	<td class="text-center">{{item.url}}</td>
                		<td class="text-center">{{item.id_board}}</td>
 	                <td class="text-center">
-	                  <a href=""><span tooltip="Edit" class="fa fa-edit "></span></a>
+	                  <a href="javascript:void(0)" (click)="updateListTrello(item.id_board)"><span  tooltip="Update Trello's List" class="fa fa-refresh "></span></a>
 	                  <a href=""><span tooltip="Edit" class="fa fa-trash text-danger"></span></a>
 	                </td>
 	            </tr>

@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common'; 
 
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
-// import { TablesComponent } from './tables.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
@@ -15,7 +18,10 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
     ChartsModule,
     BsDropdownModule,
     ButtonsModule.forRoot(),
-    // TablesComponent
+    NgbModule,
+    NgxDatatableModule,
+    ReactiveFormsModule,
+    CommonModule
   ],
   declarations: [ DashboardComponent ]
 })

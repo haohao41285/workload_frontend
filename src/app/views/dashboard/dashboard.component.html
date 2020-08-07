@@ -1,107 +1,16 @@
 <div class="animated fadeIn">
   <div class="row">
-    <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-info">
+    <div class="col-sm-6 col-lg-3" *ngFor="let s of status">
+      <div class="card text-white bg-{{s.class}}">
         <div class="card-body pb-0">
           <button type="button" class="btn btn-transparent p-0 float-right">
-            <i class="icon-location-pin"></i>
+            <i class="{{s.icon}}"></i>
           </button>
-          <div class="text-value">9.823</div>
-          <div>Members online</div>
-        </div>
-        <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
-          <canvas baseChart class="chart"
-          [datasets]="lineChart2Data"
-          [labels]="lineChart2Labels"
-          [options]="lineChart2Options"
-          [colors]="lineChart2Colours"
-          [legend]="lineChart2Legend"
-          [chartType]="lineChart2Type"></canvas>
+          <div class="text-value">{{s.count}}</div>
+          <div>{{s.status}}</div>
         </div>
       </div>
-    </div><!--/.col-->
-    <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-primary">
-        <div class="card-body pb-0">
-          <div class="btn-group float-right" dropdown>
-            <button type="button" class="btn btn-transparent dropdown-toggle p-0" dropdownToggle>
-              <i class="icon-settings"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </div>
-          <div class="text-value">9.823</div>
-          <div>Members online</div>
-        </div>
-        <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
-          <canvas baseChart class="chart"
-                  [datasets]="lineChart1Data"
-                  [labels]="lineChart1Labels"
-                  [options]="lineChart1Options"
-                  [colors]="lineChart1Colours"
-                  [legend]="lineChart1Legend"
-                  [chartType]="lineChart1Type"></canvas>
-        </div>
-      </div>
-    </div><!--/.col-->
-    <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-warning">
-        <div class="card-body pb-0">
-          <div class="btn-group float-right" dropdown>
-            <button type="button" class="btn btn-transparent dropdown-toggle p-0" dropdownToggle>
-              <i class="icon-settings"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </div>
-          <div class="text-value">9.823</div>
-          <div>Members online</div>
-        </div>
-        <div class="chart-wrapper mt-3" style="height:70px;">
-          <canvas baseChart class="chart"
-          [datasets]="lineChart3Data"
-          [labels]="lineChart3Labels"
-          [options]="lineChart3Options"
-          [colors]="lineChart3Colours"
-          [legend]="lineChart3Legend"
-          [chartType]="lineChart3Type"></canvas>
-        </div>
-      </div>
-    </div><!--/.col-->
-    <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-danger">
-        <div class="card-body pb-0">
-          <div class="btn-group float-right" dropdown>
-            <button type="button" class="btn btn-transparent dropdown-toggle p-0" dropdownToggle>
-              <i class="icon-settings"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </div>
-          <div class="text-value">9.823</div>
-          <div>Members online</div>
-        </div>
-        <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
-          <canvas baseChart class="chart"
-          [datasets]="barChart1Data"
-          [labels]="barChart1Labels"
-          [options]="barChart1Options"
-          [colors]="barChart1Colours"
-          [legend]="barChart1Legend"
-          [chartType]="barChart1Type"></canvas>
-        </div>
-      </div>
-    </div><!--/.col-->
+    </div>
   </div><!--/.row-->
 </div>
 <div class="animated fadeIn">
@@ -109,18 +18,62 @@
     <div class="col-lg-12">
      <div class="card mb-0">
           <div class="card-body">
-            <form action="" method="post" class="form-inline">
+             <form [formGroup]="searchForm" (ngSubmit)="searchTask()" class="form-inline">
               <div class="form-group mx-1">
-                  <label class="sr-only" for="if-email">From</label>
-                  <input type="date" id="if-email" name="if-email" class="form-control form-control-sm" placeholder="" autocomplete="email">
+                <input type="text" formControlName="name" class="form-control form-control-sm" placeholder="Enter Title" name="">
+              </div>
+              <div class="form-group hidden">
+                <div class="input-group">
+                  <input name="datepicker"
+                         class="form-control form-control-sm"
+                         ngbDatepicker
+                         #datepicker="ngbDatepicker"
+                         [autoClose]="'outside'"
+                         (dateSelect)="onDateSelection($event)"
+                         [displayMonths]="2"
+                         [dayTemplate]="t"
+                         outsideDays="hidden"
+                         [startDate]="fromDate!">
+                  <ng-template #t let-date let-focused="focused">
+                    <span class="custom-day"
+                          [class.focused]="focused"
+                          [class.range]="isRange(date)"
+                          [class.faded]="isHovered(date) || isInside(date)"
+                          (mouseenter)="hoveredDate = date"
+                          (mouseleave)="hoveredDate = null">
+                      {{ date.day }}
+                    </span>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="input-group">
+                  <input #dpFromDate
+                         class="form-control form-control-sm" placeholder="yyyy-mm-dd"
+                         
+                         formControlName="from"
+                         [value]="formatter.format(fromDate)"
+                         (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar fa fa-calendar btn-sm" (click)="datepicker.toggle()" type="button"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group ml-2">
+                <div class="input-group">
+                  <input #dpToDate
+                         class="form-control form-control-sm" placeholder="yyyy-mm-dd"
+                        
+                         formControlName="to"
+                         [value]="formatter.format(toDate)"
+                         (input)="toDate = validateInput(toDate, dpToDate.value)">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary calendar fa fa-calendar btn-sm" (click)="datepicker.toggle()" type="button"></button>
+                  </div>
+                </div>
               </div>
               <div class="form-group mx-1">
-                  <label class="sr-only" for="if-password">To</label>
-                 <input type="date" id="if-password" name="if-password" class="form-control form-control-sm" placeholder="" autocomplete="current-password">
-              </div>
-              <div class="form-group mx-1">
-                  <label class="sr-only" for="status">Status</label>
-                 <select class="form-control form-control-sm" id="status">
+                 <select class="form-control form-control-sm" formControlName="status" id="status">
                   <option value="all">--ALL--</option>
                     <option value="1">NEW</option>
                     <option value="2">PROGRESSING</option>
@@ -128,8 +81,8 @@
                     <option value="4">REOPEN</option>
                   </select>
               </div>
-                <button type="submit" class="btn btn-sm btn-primary mx-1"><i class="fa fa-dot-circle-o"></i> Search</button>
-                <button type="reset" class="btn btn-sm btn-danger mx-1"><i class="fa fa-ban"></i> Reset</button>
+                <button type="submit" class="btn btn-sm btn-primary mx-1"><i class="fa fa-search"></i> Search</button>
+                <button type="button" class="btn btn-sm btn-danger mx-1"><i class="fa fa-refresh"></i> Reset</button>
             </form>
         </div>
     </div>
@@ -145,76 +98,41 @@
           <i class="fa fa-tasks"></i> <b>Tasks</b> 
         </div>
         <div class="card-body">
-          <table class="table table-bordered table-striped table-hover table-sm">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th class="text-center">Deadline</th>
-                <th>Assign</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Progressing(%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Vishnu Serghei</td>
-                <td class="text-center">2012/01/01</td>
-                <td>Member</td>
-                <td class="text-center">
-                  <span class="badge badge-success">Active</span>
-                </td>
-                <td class="text-center">100</td>
-              </tr>
-              <tr>
-                <td>Zbyněk Phoibos</td>
-                <td class="text-center">2012/02/01</td>
-                <td>Staff</td>
-                <td class="text-center">
-                  <span class="badge badge-danger">Banned</span>
-                </td>
-                <td class="text-center">50</td>
-              </tr>
-              <tr>
-                <td>Einar Randall</td>
-                <td class="text-center">2012/02/01</td>
-                <td>Admin</td>
-                <td class="text-center">
-                  <span class="badge badge-secondary">Inactive</span>
-                </td>
-                <td class="text-center">20</td>
-              </tr>
-              <tr>
-                <td>Félix Troels</td>
-                <td class="text-center">2012/03/01</td>
-                <td>Member</td>
-                <td class="text-center">
-                  <span class="badge badge-warning">Pending</span>
-                </td>
-                <td class="text-center">70</td>
-              </tr>
-              <tr>
-                <td>Aulus Agmundr</td>
-                <td class="text-center">2012/01/21</td>
-                <td>Staff</td>
-                <td class="text-center">
-                  <span class="badge badge-success">Active</span>
-                </td>
-                <td class="text-center">100</td>
-              </tr>
-            </tbody>
-          </table>
-          <nav>
-            <ul class="pagination">
-              <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-              <li class="page-item active">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">4</a></li>
-              <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-          </nav>
+            <ngx-datatable class="bootstrap" [rows]="tasks" [limit]="5" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50"
+            >
+
+            <ngx-datatable-column name="Title">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.name}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Deadline">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.due}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Status">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <span  *ngIf="row.status == 1" class="badge badge-success">NEW</span>
+                <span  *ngIf="row.status == 2" class="badge badge-warning">PROGRESSING</span>
+                <span  *ngIf="row.status == 3" class="badge badge-danger">DONE</span>
+                <span  *ngIf="row.status == 4" class="badge badge-secondary">REOPEN</span>
+            </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Progressing">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.progressing}}
+              </ng-template>
+            </ngx-datatable-column>
+            <!-- <ngx-datatable-column name="Assign">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <span *ngFor="let u of row | keyvalue">{{u.user_id}}</span>
+              </ng-template>
+            </ngx-datatable-column> -->
+            <!-- <ngx-datatable-column name="Gender">
+            </ngx-datatable-column> -->
+          </ngx-datatable>
         </div>
       </div>
     </div>

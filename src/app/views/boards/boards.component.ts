@@ -5,7 +5,7 @@ import { first,map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common'; 
 
-import { TaskService } from '../../_services/task.service';
+import { BoardService } from '../../_services/board.service';
 
 @Component({
   selector: 'app-boards',
@@ -19,11 +19,11 @@ export class BoardsComponent implements OnInit {
 	// board
 
   	constructor(
-  		private taskService: TaskService,
   		private toastrService: ToastrService,
   		private formBuilder: FormBuilder,
   		private router: Router,
-  		private _location: Location
+  		private _location: Location,
+  		private boardService: BoardService
   	) { }
 
   	ngOnInit(): void {
@@ -34,7 +34,7 @@ export class BoardsComponent implements OnInit {
   	}
 
   	getBoardTrello(){
-  		this.taskService.getBoardTrello()
+  		this.boardService.getBoardTrello()
   		.subscribe(
   			res => {
   				this.boards = res;
@@ -44,7 +44,7 @@ export class BoardsComponent implements OnInit {
   	createNewBoard(){
   		if (this.boardForm.get('url').value.indexOf('https://trello.com/') > -1)
 		{
-			this.taskService.createNewBoard(this.boardForm.value)
+			this.boardService.createNewBoard(this.boardForm.value)
 	  		.subscribe(
 	  			res => {
 	  				console.log(res);
@@ -63,8 +63,27 @@ export class BoardsComponent implements OnInit {
 	  			}
 	  		);
 		}else{
-			this.toastrService.error('Error','Type a valid Trello Url');
+			this.toastrService.error('Error','Enter a valid Trello Url');
 			return;
 		}
+  	}
+
+  	updateListTrello(idBoard){
+  		// console.log(idBoard);return;
+  		this.boardService.updateListTrello(idBoard)
+  		.subscribe(
+  			res => {
+  				console.log(res);
+
+  				if(res['status'] == 'error'){
+  					this.toastrService.error('Error',res['message']);
+  				}else{
+  					this.toastrService.success('',res['message']);
+  				}
+  			},
+  			error => {
+  				this.toastrService.error('','Error');
+  			}
+  			)
   	}
 }

@@ -76,7 +76,7 @@ import { ToastrModule } from 'ngx-toastr';
     P500Component,
     LoginComponent,
     RegisterComponent,
-    LogoutComponent
+    LogoutComponent,
   ],
   providers: [{
     provide: LocationStrategy,
