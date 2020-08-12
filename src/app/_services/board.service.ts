@@ -55,4 +55,16 @@ export class BoardService {
 	    	return res;
 	    }))
   	}
+
+    deleteBoard(idBoard){
+      const httpOptions = {
+        headers : new HttpHeaders({
+          'Content-Type' : 'application/json',
+        })
+      };
+      return this.http.delete<any>(`${environment.apiUrl}/board/${idBoard}`)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
 }

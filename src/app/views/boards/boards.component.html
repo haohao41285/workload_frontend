@@ -23,32 +23,30 @@
           <i class="fa fa-align-justify"></i> <b>Trello Boards</b>
         </div>
         <div class="card-body">
-          <table class="table table-bordered table-striped table-hover table-sm">
-            <thead>
-              <tr class="thead-dark">
-                <th>Name</th>
-                <th class="text-center">Url</th>
-                <th class="text-center">IdBoard</th>
-                <th class="text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              	<tr *ngFor="let item of boards">
-                	<td>{{item.name}}</td>
-                	<td class="text-center">{{item.url}}</td>
-               		<td class="text-center">{{item.id_board}}</td>
-	                <td class="text-center">
-	                  <a href="javascript:void(0)" (click)="updateListTrello(item.id_board)"><span  tooltip="Update Trello's List" class="fa fa-refresh "></span></a>
-	                  <a href=""><span tooltip="Edit" class="fa fa-trash text-danger"></span></a>
-	                </td>
-	            </tr>
-            </tbody>
-          </table>
-          <nav>
-             <div class="float-right">
-               <!-- <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls> -->
-             </div>
-          </nav>
+          <ngx-datatable class="bootstrap" [rows]="boards" [limit]="10" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50">
+            <ngx-datatable-column name="Name">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.name}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Url">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.url}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="idBoard">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.id_board}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Action">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               <a href="javascript:void(0)" (click)="updateListTrello(row.id_board)"><span  tooltip="Update Trello's List" class="fa fa-refresh "></span></a>
+                <a href="javascript:void(0)"><span tooltip="Delete" (click)="deleteBoard(row.id)" class="fa fa-trash text-danger"></span></a>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
         </div>
       </div>
     </div>

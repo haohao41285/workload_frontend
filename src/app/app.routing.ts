@@ -100,6 +100,14 @@ export const routes: Routes = [
         path: 'trello-board',
         loadChildren: () => import('./views/boards/boards.module').then(m => m.BoardsModule)
       },
+      {
+        path: 'users',
+        loadChildren: () => import('./views/users/users.module').then(m => m.UsersModule)
+      },
+      {
+        path: 'teams',
+        loadChildren: () => import('./views/teams/teams.module').then(m => m.TeamsModule)
+      },
       { path: 'logout', component: LogoutComponent}
     ]
   },

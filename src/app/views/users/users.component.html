@@ -1,9 +1,9 @@
 <div class="animated fadeIn">
-	<div class="row">
+  <div class="row">
     <div class="col-lg-12">
-		 <div class="card">
-        	<div class="card-body">
-        	  <form [formGroup]="searchForm" (ngSubmit)="searchReport()" class="form-inline">
+     <div class="card">
+          <div class="card-body">
+            <form [formGroup]="searchForm" (ngSubmit)="searchUser()" class="form-inline">
               <div class="form-group mt-1 ml-1">
                 <input type="text" class="form-control form-control-sm" placeholder="Enter Title" formControlName="name">
               </div>
@@ -58,18 +58,9 @@
                 </div>
               </div>
               <div class="form-group mt-1 ml-1">
-                <select class="form-control form-control-sm" formControlName="id_user">
+                <select class="form-control form-control-sm" formControlName="team_id">
                   <option value="all">All</option>
-                  <option *ngFor="let t of users" value="{{t.id}}">{{t.name}}</option>
-                </select>
-              </div>
-               <div class="form-group mt-1 ml-1">
-                <select class="form-control form-control-sm" formControlName="status">
-                  <option value="all">All</option>
-                  <option value="1">NEW</option>
-                  <option value="2">PROGRESSING</option>
-                  <option value="3">DONE</option>
-                  <option value="4">REOPEN</option>
+                  <option *ngFor="let t of team_tree" value="{{t.id}}">{{t.text}}{{t.name}}</option>
                 </select>
               </div>
               <div class="form-group mt-1 ml-1">
@@ -81,59 +72,39 @@
         </div>
     </div>
       </div>
-	</div>
+  </div>
 </div>
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-lg-12">
       <div class="card">
         <div class="card-header">
-          <i class="fa fa-tasks"></i> <b>Tasks</b> 
+          <i class="fa fa-align-justify"></i> <b>Users</b>
+          <!-- <a href="#" title="" class="float-right"><button type="button" class="btn btn-sm btn-primary text-white"><span class="fa fa-plus"></span> Add User</button></a> -->
         </div>
         <div class="card-body">
-          <ngx-datatable class="bootstrap" [rows]="tasks" [limit]="10" [columnMode]="'force'"
+          <ngx-datatable class="bootstrap" [rows]="users" [limit]="10" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" [rowHeight]="50">
-            <ngx-datatable-column name="Name"  [cellMode]="'force'">
+            <ngx-datatable-column name="Name">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.task.name}}
+               {{row.name}}
               </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column name="Dealine">
+            <ngx-datatable-column name="Email">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.task.due}}
+               {{row.email}}
               </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column name="Status">
+            <ngx-datatable-column name="Team">
               <ng-template let-row="row" ngx-datatable-cell-template>
-                <span  *ngIf="row.status == 1" class="badge badge-success">NEW</span>
-                <span  *ngIf="row.status == 2" class="badge badge-warning">PROGRESSING</span>
-                <span  *ngIf="row.status == 3" class="badge badge-danger">DONE</span>
-                <span  *ngIf="row.status == 4" class="badge badge-secondary">REOPEN</span>
+                <span *ngIf="row.team == null;else showNameTeam" ></span>
+               <ng-template #showNameTeam >{{row.team.name}}</ng-template>
               </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column name="Progressing (100%)">
+            <ngx-datatable-column name="Action">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.progressing}}
-              </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column name="Main Progressing (100%)">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.task.progressing}}
-              </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column name="Time Work (Hours)">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-               <span *ngFor="let t of row.logs">{{t.time_work_per_day}}</span>
-              </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column name="Total Time Work (Hours)">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.task.time_work_total}}
-              </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column name="Dealine Times">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.extend.length}}
+               <a href="javascript:void(0)" (click)="edit(row)"><span  tooltip="Edit" class="fa fa-edit "></span></a>
+                <a href="javascript:void(0)" class="ml-1"><span tooltip="Delete" (click)="delete(row.id)" class="fa fa-trash text-danger"></span></a>
               </ng-template>
             </ngx-datatable-column>
           </ngx-datatable>
@@ -142,3 +113,52 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Edit User -->
+<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Edit User</h4>
+        <button type="button" class="close" (click)="infoModal.hide()" (click)="resetTeamForm()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="updateUser()">
+          <div class="modal-body px-1 py-1">
+            <div class="card-body">
+                <div class="form-group my-1">
+                  <label for="name required">Name</label>
+                  <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
+                </div>
+                <div class="form-group my-1">
+                  <label for="pasword">Current Password</label>
+                  <input type="password" id="password" class="form-control form-control-sm" formControlName="password">
+                </div>
+                <div class="form-group my-1">
+                  <label for="new_password">New Password</label>
+                  <input type="password" id="new_password" class="form-control form-control-sm" formControlName="new_password">
+                </div>
+                <div class="form-group my-1">
+                  <label for="re_new_password">Repeat New Password</label>
+                  <input type="password" id="re_new_password" class="form-control form-control-sm" formControlName="re_new_password">
+                </div>
+                <div class="form-group my-1">
+                  <label for="key">Key( Trello )</label>
+                  <input type="text" id="key" class="form-control form-control-sm" formControlName="key">
+                </div>
+                <div class="form-group my-1">
+                  <label for="token">Token( Trello )</label>
+                  <input type="text" id="token" class="form-control form-control-sm" formControlName="token">
+                </div>
+            </div>
+          </div>
+        <div class="modal-footer py-1">
+          <button type="reset" class="btn btn-danger btn-sm" (click)="infoModal.hide()">Close</button>
+          <button type="submit" [disabled]="!editForm.valid"  class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End Edit User Modal -->

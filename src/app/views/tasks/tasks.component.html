@@ -84,47 +84,43 @@
         </div>
         <div class="card-body">
           <ngx-datatable class="bootstrap" [rows]="tasks" [limit]="10" [columnMode]="'force'"
-          [headerHeight]="50" [footerHeight]="50" [rowHeight]="50"
-          >
-
-          <ngx-datatable-column name="Title">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-             {{row.task.name}}
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column name="Date Start">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-             {{row.task.date_start}}
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column name="Deadline">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-             {{row.task.due}}
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column name="Status">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-              <span  *ngIf="row.status == 1" class="badge badge-success">NEW</span>
-              <span  *ngIf="row.status == 2" class="badge badge-warning">PROGRESSING</span>
-              <span  *ngIf="row.status == 3" class="badge badge-danger">DONE</span>
-              <span  *ngIf="row.status == 4" class="badge badge-secondary">REOPEN</span>
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column name="Progressing">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-             {{row.progressing}}
-            </ng-template>
-          </ngx-datatable-column>
-          <ngx-datatable-column name="Action">
-            <ng-template let-row="row" ngx-datatable-cell-template>
-             <a href="javascript:void(0)"><span tooltip="Edit" class="fa fa-edit "></span></a>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <!-- <ngx-datatable-column name="Gender">
-          </ngx-datatable-column> -->
-        </ngx-datatable>
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" [sorts]="[{ prop: 'task.date_start', dir: 'desc' }]">
+            <ngx-datatable-column name="Title">
+              <ng-template let-row="row" prop="name" ngx-datatable-cell-template>
+               {{row.task.name}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Date Start">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.task.date_start}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Deadline">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.task.due}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Status">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+                <span  *ngIf="row.status == 1" class="badge badge-success">NEW</span>
+                <span  *ngIf="row.status == 2" class="badge badge-warning">PROGRESSING</span>
+                <span  *ngIf="row.status == 3" class="badge badge-danger">DONE</span>
+                <span  *ngIf="row.status == 4" class="badge badge-secondary">REOPEN</span>
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Progressing">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.progressing}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Action">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               <a href="javascript:void(0)" class="text-primary" (click)="updateModal.show()" (click)="show(row)"><span tooltip="Edit" class="fa fa-edit "></span></a>
+               <a href="javascript:void(0)" class="mf-2 text-danger" (click)="logModal.show()" (click)="showLog(row)" ><span tooltip="Logs" class="fa fa-comments "></span></a>
+               <a href="javascript:void(0)" class="mf-2 text-success" (click)="extendModal.show()" (click)="showExtend(row)" ><span tooltip="Extend" class="fa fa-hourglass-start"></span></a>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
         </div>
       </div>
     </div>
@@ -145,9 +141,13 @@
       </div>
       <form [formGroup]="cardForm" (ngSubmit)="createCard()">
         <div class="modal-body px-1 py-1">
-          <div class="card-body">
-             <div class="form-group my-1">
-              <label for="assign required">Trello Board</label>
+          <div class="card-body mt-0 pt-0">
+            <div class="form-group my-1">
+              <label for="name required">Title</label>
+              <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
+            </div>
+            <div class="form-group my-1">
+              <label for="required">Trello Board</label>
               <select class="form-control form-control-sm" (change)="getList()" formControlName="idBoard">
                 <option *ngFor="let b of board" value="{{b.id}}">{{b.name}}</option>
               </select>
@@ -159,8 +159,18 @@
               </select>
             </div>
             <div class="form-group my-1">
-              <label for="name required">Title</label>
-              <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
+              <label>Assign</label>
+              <ng-select [items]="idMembers"
+                bindLabel="name"
+                bindValue="id_trello"
+                placeholder="Select item"
+                appendTo="body"
+                multiple="true"
+                [searchable]="true" 
+                [clearable]="true"
+                [closeOnSelect]="false"
+                formControlName="idMembers">
+              </ng-select>
             </div>
             <div class="form-group my-1">
               <label for="date_start required">Date Start</label>
@@ -196,13 +206,20 @@
                 </div>
               </div>
             </div>
-            <div class="form-group my-1">
-              <label for="assign">Assign</label>
-              <select class="form-control form-control-sm" formControlName="assign" multiple>
-                <option value="1">thieu.nguyen</option>
-                <option value="2">hieu.do</option>
-              </select>
-            </div>
+           <!--  <div class="form-group my-1">
+              <label>Assign</label>
+              <ng-select [items]="idMembers"
+                bindLabel="name"
+                bindValue="id_trello"
+                placeholder="Select item"
+                appendTo="body"
+                multiple="true"
+                [searchable]="true" 
+                [clearable]="true"
+                [closeOnSelect]="false"
+                formControlName="idMembers">
+              </ng-select>
+            </div> -->
             <div class="form-group my-1">
               <label for="desc">Description</label>
               <textarea class="form-control form-control-sm" id="desc" formControlName="desc" rows="3"></textarea>
@@ -218,3 +235,152 @@
   </div>
 </div>
 <!-- End modal new task -->
+
+<!-- modal update task -->
+<div bsModal #updateModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Update Task</h4>
+        <button type="button" class="close" (click)="updateModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="updateForm" (ngSubmit)="update()">
+        <div class="modal-body px-1 py-1">
+          <div class="card-body">
+            <div class="form-group my-1">
+              <label for="name required">Title</label>
+              <input type="text" class="form-control form-control-sm" formControlName="name">
+            </div>
+            <div class="form-group my-1">
+              <label for="name required">Detail Progressing (%)</label>
+              <select class="form-control form-control-sm" (change)="calculate()" formControlName="detail_progressing">
+                <option *ngFor="let p of progressing_arr" value="{{p}}">{{p}}</option>
+              </select>
+            </div>
+            <div class="form-group my-1">
+              <label for="name required">Status</label>
+              <select class="form-control form-control-sm" formControlName="status">
+                <option value="1">NEW</option>
+                <option value="2">PROGRESSING</option>
+                <option value="3">DONE</option>
+                <option value="4">REOPEN</option>
+              </select>
+            </div>
+            <div class="form-group my-1">
+              <label for="name required">Main Progressing Task (%)</label>
+              <input type="text" class="form-control form-control-sm" formControlName="main_progressing">
+            </div>
+            <div class="form-group my-1">
+              <label for="idList required">List</label>
+              <select name="list" formControlName="idList" class="form-control form-control-sm">
+                <option *ngFor="let l of list" value="{{l.idList}}">{{l.name}}</option>
+              </select>
+            </div>
+            <div class="form-group my-1">
+              <label for="desc">Description</label>
+              <textarea class="form-control form-control-sm" formControlName="desc" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-danger btn-sm" (click)="updateModal.hide()">Close</button>
+          <button type="submit" [disabled]="!updateForm.valid"  class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end modal update task -->
+<!-- logs modal -->
+<div bsModal #logModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Logs Task</h4>
+        <button type="button" class="close" (click)="logModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="logForm" (ngSubmit)="addLog()">
+        <div class="modal-body px-1 py-1">
+          <div class="card-body">
+            <div class="form-group my-1">
+               <label for="name required">Date Work</label>
+                <div class="input-group">
+                  <input class="form-control" placeholder="yyyy-mm-dd"
+                        formControlName="date_work" [maxDate]="today" ngbDatepicker #dw="ngbDatepicker">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary fa fa-calendar calendar" (click)="dw.toggle()" type="button"></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group my-1">
+              <label for="desc">Time Work</label>
+              <input type="number" formControlName="time_work_per_day" class="form-control form-control-sm">
+            </div>
+            <div class="form-group my-1">
+              <label for="desc">Comment</label>
+              <textarea class="form-control form-control-sm" formControlName="comment" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-danger btn-sm" (click)="logModal.hide()">Close</button>
+          <button type="submit" [disabled]="!logForm.valid"  class="btn btn-primary btn-sm">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end logs modal -->
+<!-- extend modal -->
+<div bsModal #extendModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Extend Task</h4>
+        <button type="button" class="close" (click)="extendModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="extendForm" (ngSubmit)="extent()">
+        <div class="modal-body px-1 py-1">
+          <div class="card-body">
+            <div class="form-group my-1">
+              <label for="desc">Deadline</label>
+              <input type="text" class="form-control form-control-sm" formControlName="deadline">
+            </div>
+            <div class="form-group my-1">
+               <label for="name required">New Deadline</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <ngb-timepicker formControlName="time_start" ></ngb-timepicker>
+                </div>
+                <div class="col-md-8">
+                    <div class="input-group">
+                      <input class="form-control" placeholder="yyyy-mm-dd"
+                            formControlName="expired_date" ngbDatepicker #de="ngbDatepicker">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary fa fa-calendar calendar" (click)="de.toggle()" type="button"></button>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group my-1">
+              <label for="desc">Note</label>
+              <textarea class="form-control form-control-sm" formControlName="note" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-danger btn-sm" (click)="extendModal.hide()">Close</button>
+          <button type="submit" [disabled]="!extendForm.valid"  class="btn btn-primary btn-sm">Extend</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end extend modal -->

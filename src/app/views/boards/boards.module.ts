@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { BoardsComponent } from './boards.component';
 import { BoardsRoutingModule } from './boards-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @NgModule({
   declarations: [BoardsComponent],
@@ -10,7 +12,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     BoardsRoutingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgxDatatableModule,
+    TooltipModule.forRoot(),
   ]
 })
 export class BoardsModule { }

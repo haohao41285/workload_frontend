@@ -37,8 +37,11 @@ export class BoardsComponent implements OnInit {
   		this.boardService.getBoardTrello()
   		.subscribe(
   			res => {
-  				this.boards = res;
-  			})
+  				this.boards = res['boards'];
+  			},
+        error=>{
+          this.toastrService.error('Error','Get Boards Failed!');
+        })
   	}
 
   	createNewBoard(){
@@ -47,7 +50,6 @@ export class BoardsComponent implements OnInit {
 			this.boardService.createNewBoard(this.boardForm.value)
 	  		.subscribe(
 	  			res => {
-	  				console.log(res);
 	  				if(res['status'] == 'error'){
 	  					this.toastrService.error(res['status'],res['message']);
 	  					return;
@@ -56,10 +58,11 @@ export class BoardsComponent implements OnInit {
 	  				}else{
 	  					this.toastrService.success(res['status'],res['message']);
 	  					this._location.forward();
+              this.boards = res['boards'];
 	  				}
 	  			},
 	  			error=> {
-	  				console.log(error);
+            this.toastrService.error('Error','Add New Board Failed!');
 	  			}
 	  		);
 		}else{
@@ -69,16 +72,14 @@ export class BoardsComponent implements OnInit {
   	}
 
   	updateListTrello(idBoard){
-  		// console.log(idBoard);return;
   		this.boardService.updateListTrello(idBoard)
   		.subscribe(
   			res => {
-  				console.log(res);
-
   				if(res['status'] == 'error'){
   					this.toastrService.error('Error',res['message']);
   				}else{
   					this.toastrService.success('',res['message']);
+            return;
   				}
   			},
   			error => {
@@ -86,4 +87,19 @@ export class BoardsComponent implements OnInit {
   			}
   			)
   	}
+
+    deleteBoard(idBoard){
+      this.boardService.deleteBoard(idBoard)
+      .subscribe(
+        res => {
+          if(res['status'] == 'error'){
+            this.toastrService.error('Error',res['message']);
+            return;
+          }
+          this.toastrService.success("Success",'Delete Successfully!');
+        },
+        error => {
+          this.toastrService.error('Error',"Failed!");
+        })
+    }
 }

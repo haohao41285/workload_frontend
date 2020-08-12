@@ -1,20 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReportsComponent } from './reports.component';
-import { ReportsRoutingModule } from './reports-routing.module';
+import { UsersComponent } from './users.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
+import { UsersRoutingModule } from './users-routing.module';
 
 @NgModule({
-  declarations: [ReportsComponent],
+  declarations: [UsersComponent],
   imports: [
     CommonModule,
-    ReportsRoutingModule,
+    UsersRoutingModule,
     NgxDatatableModule,
     TooltipModule.forRoot(),
     FormsModule,
@@ -23,4 +22,4 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ModalModule
   ]
 })
-export class ReportsModule { }
+export class UsersModule { }

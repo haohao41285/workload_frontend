@@ -60,5 +60,55 @@ export class TaskService {
                 return res;
               }))
     }
+    public show(id_board){
+      return this.http.get(`${environment.apiUrl}/detail_task/${id_board}`)
+            .pipe(map(res=>{
+              return res;
+            }))
+    }
+    public calculate(data){
+      const httpOptions = {
+        headers: new HttpHeaders({
+              'Content-Type':  'application/json',
+              // 'Content-Type': 'multipart/form-data'
+          })
+      };
+      return this.http.post<any>(`${environment.apiUrl}/task-calculate`,data,httpOptions)
+              .pipe(map(res=>{
+                return res;
+              }))
+    }
+    public update(id,data){
+      return this.http.patch(`${environment.apiUrl}/task/${id}`,data)
+            .pipe(map(res=>{
+              return res;
+            }))
+    }
+
+    //Log
+    public addLog(data){
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type' : 'application/json'
+        })
+      };
+      return this.http.post<any>(`${environment.apiUrl}/log`,data)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
+
+    //Extend Task
+    public extend(data){
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type' : 'application/json'
+        })
+      };
+      return this.http.post<any>(`${environment.apiUrl}/extend`,data)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
 
 }
