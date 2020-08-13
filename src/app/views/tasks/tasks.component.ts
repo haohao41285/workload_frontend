@@ -41,6 +41,7 @@ export class TasksComponent implements OnInit {
   	list_arr: any;
   	idMembers :any;
   	progressing_arr = Array();
+  	projects : any;
 
   	time: NgbTimeStruct = {hour: 11, minute: 30, second: 0};
 
@@ -89,6 +90,7 @@ export class TasksComponent implements OnInit {
   			time_end : [this.time],
   			idBoard : ['',Validators.required],
   			start_date : [this.calendar.getToday(),Validators.required],
+  			id_project : ['', Validators.required]
   		});
   		this.createSearchForm();
   		this.createUpdateForm();
@@ -116,7 +118,7 @@ export class TasksComponent implements OnInit {
   			comment : [''],
   			id_user : [''],
   			id_task_detail : [''],
-  			id_task :['']
+  			id_task :[''],
   		})
   	}
 
@@ -175,6 +177,7 @@ export class TasksComponent implements OnInit {
 				this.cardForm.get('idBoard').setValue(idBoard);
 				this.list = res['lists'][idBoard];
 				this.idMembers  = res['users'];
+				this.projects = res['projects'];
 			},
 			error => {
 				this.toastrService.error('Error','Get Boards, Lists Failed!');

@@ -5,10 +5,36 @@ import { UsersComponent } from './users.component';
 const routes: Routes = [
   {
     path: '',
-    component: UsersComponent,
     data: {
       title: 'Users'
-    }
+    },
+    children: [
+      {
+        path: '',
+        redirectTo: 'users'
+      },
+      {
+        path: 'list',
+        component: UsersComponent,
+        data: {
+          title: 'Users'
+        }
+      },
+      {
+        path: 'roles',
+        component: UsersComponent,
+        data: {
+          title: 'Roles'
+        }
+      },
+      {
+        path: 'permissions',
+        component: UsersComponent,
+        data: {
+          title: 'Permissions'
+        }
+      }
+    ]
   }
 ];
 

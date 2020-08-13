@@ -28,6 +28,3 @@ label{
    color: red;
    content: '*';
 }
-.ngb-dp-today > .btn-light {
-  background-color: red!important;
-}

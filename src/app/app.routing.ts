@@ -108,6 +108,10 @@ export const routes: Routes = [
         path: 'teams',
         loadChildren: () => import('./views/teams/teams.module').then(m => m.TeamsModule)
       },
+      {
+        path: 'projects',
+        loadChildren: () => import('./views/projects/projects.module').then(m => m.ProjectsModule)
+      },
       { path: 'logout', component: LogoutComponent}
     ]
   },

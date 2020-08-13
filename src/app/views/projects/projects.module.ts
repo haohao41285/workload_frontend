@@ -4,18 +4,20 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-
-
-import { TasksComponent } from './tasks.component';
-import { TasksRoutingModule } from './tasks-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 
+
+import { ProjectsComponent } from './projects.component';
+import { ProjectsRoutingModule } from './projects-routing.module';
+
+
+
 @NgModule({
-  declarations: [TasksComponent],
+  declarations: [ProjectsComponent],
   imports: [
     CommonModule,
-    TasksRoutingModule,
+    ProjectsRoutingModule,
     ModalModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
@@ -23,8 +25,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
     NgbModule,
     NgxDatatableModule,
     NgSelectModule
-  ],
-  exports: [TasksComponent],
-  bootstrap: [TasksComponent]
+  ]
 })
-export class TasksModule { }
+export class ProjectsModule { }
