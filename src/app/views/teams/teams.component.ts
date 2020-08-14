@@ -20,6 +20,10 @@ export class TeamsComponent implements OnInit {
 	users: any;
 	team_tree: any;
   	hoveredDate: NgbDate | null = null;
+  	user_list: any;
+  	teams_user:any;
+  	team_name = "";
+  	current_id_team = 0;
 
 	fromDate: NgbDate | null;
 	toDate: NgbDate | null;
@@ -124,6 +128,9 @@ export class TeamsComponent implements OnInit {
 	resetForm(){
 		this.searchForm.reset();
 		this.searchTeam();
+		this.user_list = {};
+		this.teams_user = {};
+		this.team_name = "";
 	}
 	deleteTeam(id_team){
 		if(window.confirm("Do you want delete this team?")){
@@ -222,6 +229,69 @@ export class TeamsComponent implements OnInit {
 		error=>{
 			this.toastrService.error('Error','Update Team Failed!');
 		})
+	}
+	show(event){
+		var id = event['id'];
+		var team_name = event['name'];
+		this.current_id_team = id;
+		this.teamService.show(id).subscribe(res=>{
+			console.log(res);
+			if(res['status'] == 'error'){
+				this.toastrService.error(res['status'],res['message']);
+				return;
+			}else{
+				this.toastrService.success(res['status'],res['message']);
+				this.user_list = res['users'];
+				this.teams_user = res['teams_user'];
+				this.team_name = team_name;
+
+			}
+		},err=>{
+			this.toastrService.error('Error','Get List\' User Failed!');
+		})
+	}
+	addTeam(id){
+		var data = {
+			'id' : id,
+			'id_team' : this.current_id_team
+		}
+		this.teamService.addUserToTeam(data).subscribe(res=>{
+			if(res['status'] == 'error'){
+				this.toastrService.error(res['status'],res['message']);
+				return;
+			}
+			this.user_list = res['user_list'];
+			this.teams_user = res['teams_user'];
+		},err=>{
+			this.toastrService.error('Error','Add User to Team Failed!');
+		})
+	}
+	removeTeam(id){
+		if(confirm('Do You want remove this user?')){
+			var data = {
+			    id : id,
+			    id_team : this.current_id_team
+			}
+			this.teamService.removeUserOutTeam(data).subscribe(res=>{
+				if(res['status'] == 'error'){
+					this.toastrService.error(res['status'],res['message']);
+					return;
+				}
+				this.toastrService.success(res['status'],res['message']);
+				this.user_list = res['user_list'];
+				this.teams_user = res['teams_user'];
+			},err=>{
+				this.toastrService.error('Error','Remove User Failed!');
+			})
+		}else{
+			return;
+		}
+			
+	}
+
+	//Scroll to a element
+	scroll(el: HTMLElement) {
+	    el.scrollIntoView();
 	}
 
   	//Datepicker

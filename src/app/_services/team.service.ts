@@ -24,7 +24,7 @@ export class TeamService {
   				'Content-Type' : 'application/json',
   			})
   		};
-  		return this.http.post<any>(`${environment.apiUrl}/team-search`,data_search,httpOptions)
+  		return this.http.post<any>(`${environment.apiUrl}/team/search`,data_search,httpOptions)
   		.pipe(map(res=>{
   			 return res;
   		}))
@@ -41,7 +41,7 @@ export class TeamService {
   		}))
   	}
   	getTeamsLeader(){
-  		return this.http.get(`${environment.apiUrl}/teams-leader`)
+  		return this.http.get(`${environment.apiUrl}/team/leader`)
   			.pipe(map(res=>{
   				return res;
   			}))
@@ -58,14 +58,38 @@ export class TeamService {
       }))
     }
     update(data,id){
-      // const httpOptions = {
-      //   headers : new HttpHeaders({
-      //     'Content-Type' : 'application/json',
-      //   })
-      // };
       return this.http.patch<any>(`${environment.apiUrl}/team/${id}`,data)
               .pipe(map(res=>{
                 return res;
               }))
+    }
+    show(id){
+      return this.http.get(`${environment.apiUrl}/team/${id}`)
+      .pipe(map(
+        res => {
+          return res;
+        }))
+    }
+    addUserToTeam(data){
+      const httpOptions = {
+        headers : new HttpHeaders({
+          'Content-Type' : 'application/json',
+        })
+      };
+      return this.http.post(`${environment.apiUrl}/team/add-user-to-team`,data,httpOptions)
+      .pipe(res=>{
+        return res;
+      })
+    }
+    removeUserOutTeam(data){
+      const httpOptions = {
+        headers : new HttpHeaders({
+          'Content-Type' : 'application/json',
+        })
+      };
+      return this.http.post(`${environment.apiUrl}/team/remove-user-out-team`,data,httpOptions)
+      .pipe(res=>{
+        return res;
+      })
     }
 }
