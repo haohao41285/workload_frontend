@@ -8,6 +8,7 @@ import {NgbDate, NgbCalendar, NgbDateParserFormatter,NgbDateStruct} from '@ng-bo
 
 import { UserService } from '../../_services/user.service';
 import { TeamService } from '../../_services/team.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 @Component({
   selector: 'app-users',
@@ -25,14 +26,7 @@ export class UsersComponent implements OnInit {
 
 	//creater team modal
 	@ViewChild('infoModal') public infoModal:ModalDirective;
-	// Show Modal infoModal
-	public showChildModal():void {
-	  this.infoModal.show();
-	}
-	// Hide Modal infoModal
-	public hideChildModal():void {
-	  this.infoModal.hide();
-	}
+	@ViewChild('passwordModal') public passwordModal:ModalDirective;
 
 	constructor(
 	  	private toastrService: ToastrService,
@@ -40,7 +34,8 @@ export class UsersComponent implements OnInit {
 		private calendar: NgbCalendar,
 		public formatter: NgbDateParserFormatter,
 		private formBuilder: FormBuilder,
-		private teamService: TeamService
+		private teamService: TeamService,
+		private progressBar: ProgressBarService
   	) {
     	// this.setFromToDate();
     }
@@ -81,19 +76,22 @@ export class UsersComponent implements OnInit {
   	//User
   	//get all users
 	getUsers(){
+		this.progressBar.startLoading();
 	  	this.userService.getAll()
 	  	.subscribe(
 	  		res => {
 	  			console.log(res);
 	  			if(res['status'] == 'error'){
 	  				this.toastrService.error(res['status'],res['message']);
-	  				return;
+	  			}else{
+	  				this.users = res['users'];
+	  				this.team_tree = res['teams'];
 	  			}
-	  			this.users = res['users'];
-	  			this.team_tree = res['teams'];
+	  			this.progressBar.completeLoading();
 	  		},
 	  		error => {
 	  			this.toastrService.error('Error','Get List Failed!');
+	  			this.progressBar.completeLoading();
 	  		})
 	}
 	resetForm(){
@@ -101,17 +99,21 @@ export class UsersComponent implements OnInit {
 	}
 	//search User
 	searchUser(){
+		this.progressBar.startLoading();
 		var data_search = this.searchForm.value;
 		this.userService.search(data_search)
 		.subscribe(
 			res=>{
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
+			}else{
+				this.users = res;
 			}
-			this.users = res;
+			this.progressBar.completeLoading();
 			},
 			error => {
 				this.toastrService.error('Error','Search User Failed!');
+				this.progressBar.completeLoading();
 			})
 	}
 	delete(id){
@@ -147,18 +149,29 @@ export class UsersComponent implements OnInit {
 		// 	this.toastrService.error('Error','New password not match!');
 		// 	return;
 		// }
+		this.progressBar.startLoading();
 		var id = this.f.id.value;
 		var data = this.editForm.value;
 
 		this.userService.update(id,data)
 		.subscribe(res=>{
+			console.log(res);
 			if(res['status'] == 'error'){
-				this.toastrService.error(res['status'],res['message']);
-				return;
+				if( typeof(res['message']) == 'string')
+					this.toastrService.error(res['status'],res['message']);
+				else{
+					for(let e in res['message']){
+						this.toastrService.error(res['message'][e]);
+					}
+				}
+			}else{
+				this.users = res['users'];
+				this.toastrService.success(res['status'],res['message']);
+				this.infoModal.hide();
 			}
-			this.users = res['users'];
-			this.toastrService.success(res['status'],res['message']);
-		},error=>{
+			this.progressBar.completeLoading();
+		},
+		error=>{
 			console.log(error);
 			if(error.status == 422){
 				var errors = error.error.errors;

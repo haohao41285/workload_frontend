@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 
 import { AuthenticationService } from '../../_services/authentication.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 
 @Component({
@@ -23,7 +24,8 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private authenticationService: AuthenticationService,
-        private toastrService: ToastrService
+        private toastrService: ToastrService,
+        private progressBar: ProgressBarService
     ) { 
         // redirect to home if already logged in
         if (this.authenticationService.currentUserValue) { 
@@ -53,6 +55,7 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit() {
+        this.progressBar.startLoading();
         this.submitted = true;
         // stop here if form is invalid
         if (this.loginForm.invalid) {
@@ -69,6 +72,7 @@ export class LoginComponent implements OnInit {
                 		return;
                 	}
                     this.router.navigate([this.returnUrl]);
+                    this.progressBar.completeLoading();
                 },
                 error => {
                     this.error = error;
@@ -77,7 +81,7 @@ export class LoginComponent implements OnInit {
                     }else{
                         this.toastrService.warning('error','Connection Failed');
                     }
-                    // this.loading = false;
+                    this.progressBar.completeLoading();
                 });
     }
 }

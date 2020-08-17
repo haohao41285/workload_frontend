@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first,map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { Location } from '@angular/common'; 
+import { Location } from '@angular/common';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 
 import { BoardService } from '../../_services/board.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 @Component({
   selector: 'app-boards',
@@ -16,90 +18,182 @@ export class BoardsComponent implements OnInit {
 
 	boards:any;
 	boardForm: FormGroup;
-	// board
+  lists: any;
+  users: any;
+  data_users : any;
+  members : any;
 
-  	constructor(
-  		private toastrService: ToastrService,
-  		private formBuilder: FormBuilder,
-  		private router: Router,
-  		private _location: Location,
-  		private boardService: BoardService
-  	) { }
+  @ViewChild('tableModal') public tableModal:ModalDirective;
+  @ViewChild('userModal') public userModal:ModalDirective;
 
-  	ngOnInit(): void {
-  		this.getBoardTrello();
-  		this.boardForm = this.formBuilder.group({
-  			url: ['',Validators.required]
-  		});
-  	}
+	constructor(
+		private toastrService: ToastrService,
+		private formBuilder: FormBuilder,
+		private router: Router,
+		private _location: Location,
+		private boardService: BoardService,
+    private progressBar:ProgressBarService
+	) { }
 
-  	getBoardTrello(){
-  		this.boardService.getBoardTrello()
-  		.subscribe(
-  			res => {
-  				this.boards = res['boards'];
-  			},
-        error=>{
-          this.toastrService.error('Error','Get Boards Failed!');
-        })
-  	}
+	ngOnInit(): void {
+		this.getBoardTrello();
+		this.boardForm = this.formBuilder.group({
+			url: ['',Validators.required]
+		});
+	}
 
-  	createNewBoard(){
-  		if (this.boardForm.get('url').value.indexOf('https://trello.com/') > -1)
-		{
-			this.boardService.createNewBoard(this.boardForm.value)
-	  		.subscribe(
-	  			res => {
-	  				if(res['status'] == 'error'){
-	  					this.toastrService.error(res['status'],res['message']);
-	  					return;
-	  				}else if(res['status'] == 'warning'){
-	  					this.toastrService.warning(res['status'],res['message']);
-	  				}else{
-	  					this.toastrService.success(res['status'],res['message']);
-	  					this._location.forward();
-              this.boards = res['boards'];
-	  				}
-	  			},
-	  			error=> {
-            this.toastrService.error('Error','Add New Board Failed!');
-	  			}
-	  		);
-		}else{
-			this.toastrService.error('Error','Enter a valid Trello Url');
-			return;
-		}
-  	}
+	getBoardTrello(){
+    this.progressBar.startLoading();
+		this.boardService.getBoardTrello()
+		.subscribe(
+			res => {
+				this.boards = res['boards'];
+        this.progressBar.completeLoading();
+			},
+      error=>{
+        this.toastrService.error('Error','Get Boards Failed!');
+        this.progressBar.completeLoading();
+      })
+	}
 
-  	updateListTrello(idBoard){
-  		this.boardService.updateListTrello(idBoard)
+	createNewBoard(){
+    this.progressBar.startLoading();
+		if (this.boardForm.get('url').value.indexOf('https://trello.com/') > -1)
+	  {
+		this.boardService.createNewBoard(this.boardForm.value)
   		.subscribe(
   			res => {
   				if(res['status'] == 'error'){
-  					this.toastrService.error('Error',res['message']);
+  					this.toastrService.error(res['status'],res['message']);
+  					return;
+  				}else if(res['status'] == 'warning'){
+  					this.toastrService.warning(res['status'],res['message']);
   				}else{
-  					this.toastrService.success('',res['message']);
-            return;
+  					this.toastrService.success(res['status'],res['message']);
+  					this._location.forward();
+            this.boards = res['boards'];
   				}
+          this.progressBar.completeLoading();
   			},
-  			error => {
-  				this.toastrService.error('','Error');
+  			error=> {
+          this.toastrService.error('Error','Add New Board Failed!');
+          this.progressBar.completeLoading();
   			}
-  			)
-  	}
+  		);
+	}else{
+		this.toastrService.error('Error','Enter a valid Trello Url');
+    this.progressBar.completeLoading();
+		return;
+	}
+	}
 
-    deleteBoard(idBoard){
+	updateListTrello(idBoard){
+		this.boardService.updateListTrello(idBoard)
+		.subscribe(
+			res => {
+				if(res['status'] == 'error'){
+					this.toastrService.error('Error',res['message']);
+				}else{
+					this.toastrService.success('',res['message']);
+          return;
+				}
+			},
+			error => {
+				this.toastrService.error('','Error');
+			}
+		)
+	}
+
+  deleteBoard(idBoard){
+    if(confirm('Do you wanna delete this Trello\'s Board')){
+      this.progressBar.startLoading();
       this.boardService.deleteBoard(idBoard)
       .subscribe(
         res => {
           if(res['status'] == 'error'){
             this.toastrService.error('Error',res['message']);
-            return;
+          }else{
+            this.toastrService.success("Success",'Delete Successfully!');
+            this.boards = res['boards'];
           }
-          this.toastrService.success("Success",'Delete Successfully!');
+          this.progressBar.completeLoading();
         },
         error => {
           this.toastrService.error('Error',"Failed!");
+          this.progressBar.completeLoading();
         })
+    }else{
+      return;
     }
+  }
+
+  getList(id){
+    this.progressBar.startLoading();
+    this.boardService.getList(id).subscribe(res=>{
+      if(res['status'] == 'error'){
+        this.toastrService.error(res['status'],res['message']);
+      }else{
+        this.toastrService.success('',res['message']);
+        this.lists = {};
+        this.lists = res['list'];
+        this.tableModal.show();
+      }
+        this.progressBar.completeLoading();
+    },
+    err=>{
+      this.toastrService.error('Error','Get List Failed!');
+      this.progressBar.completeLoading();
+    })
+  }
+
+  getUsers(id){
+    this.users = {};
+    this.members = {};
+    this.userModal.show();
+    this.progressBar.startLoading();
+
+    this.boardService.getUsers(id).subscribe(res=>{
+      if(res['status'] == 'error'){
+        this.toastrService.error(res['status'], res['message']);
+        return;
+      }
+      this.members = res['members'];
+      this.users = res['users'];
+      this.progressBar.completeLoading();
+    },
+    err=>{
+      this.toastrService.error('Error','Get User Failed!');
+      this.progressBar.completeLoading();
+    })
+  }
+  onActivate(event) {
+  if(event.type == 'click') {
+    event.rowElement.style.background = '#1be050';
+    }
+  }
+  updateUser(id_trello,event){
+    console.log(id_trello);
+    // console.log(event.srcElement.value);
+    console.log(event);
+    var id_user = event.srcElement.value;
+    if(id_trello != "" && id_user != ""){
+      this.progressBar.startLoading();
+      var data = {
+        id_user : id_user,
+        id_trello : id_trello
+      }
+      this.boardService.updateIdTrelloToUser(data)
+      .subscribe(res=>{
+        if(res['status'] == 'error'){
+          this.toastrService.error(res['status'],res['message']);
+        }else{
+          this.toastrService.success(res['status'],res['message']);
+        }
+        this.progressBar.completeLoading();
+      },err=>{
+        this.toastrService.error('Error','Update Failed!');
+        this.progressBar.completeLoading();
+      })
+    }
+  }
 }

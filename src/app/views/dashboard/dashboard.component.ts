@@ -10,8 +10,7 @@ import { formatDate,Location } from '@angular/common';
 import { User } from '../../_models/user';
 import { UserService } from '../../_services/user.service';
 import { TaskService } from '../../_services/task.service';
-
-// import { AuthenticationService } from '../../_services/authentication.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 //end add
 
 @Component({
@@ -41,6 +40,7 @@ export class DashboardComponent implements OnInit {
      private formBuilder: FormBuilder,
      private _location: Location,
      private taskService: TaskService,
+     private progressBar: ProgressBarService
     ){
       this.fromDate = calendar.getPrev(calendar.getToday(), 'd', 30);
       this.toDate = calendar.getNext(calendar.getToday(), 'd', 5);
@@ -90,26 +90,26 @@ export class DashboardComponent implements OnInit {
       });
     }
   searchTask(){
+    this.progressBar.startLoading();
     var data_search = this.searchForm.value;
-    console.log(data_search);
     data_search.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
     // data_search.token = localStorage.getItem('currentToken');
 
     this.taskService.searchTaskTotal(data_search)
     .subscribe(
       res=>{
-        // console.log(res);return;
         if(res.status == "error"){
           this.toastrService.error(res.status,res.message);
+          this.progressBar.completeLoading();
           return;
         }
         this.tasks = res['tasks'];
         this.status = res['status'];
-        console.log(res);
-        // this._location.forward();
+        this.progressBar.completeLoading();
       },
       error=>{
         this.toastrService.error("Error",this.ERROR_ALERT);
+        this.progressBar.completeLoading();
       }
     )
   }

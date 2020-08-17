@@ -50,6 +50,11 @@ import { LogoutComponent } from './views/logout/logout.component';
 //Import Alert Toastr
 import { ToastrModule } from 'ngx-toastr';
 
+// Progress Bar
+import { NgProgressModule } from 'ngx-progressbar';
+import { NgProgressRouterModule } from 'ngx-progressbar/router';
+import { NgProgressHttpModule } from 'ngx-progressbar/http';
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -68,6 +73,12 @@ import { ToastrModule } from 'ngx-toastr';
     ReactiveFormsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
+    NgProgressModule.withConfig({
+      color: '#1be050',
+      spinnerPosition: 'left'
+    }),
+    NgProgressRouterModule,
+    NgProgressHttpModule
   ],
   declarations: [
     AppComponent,

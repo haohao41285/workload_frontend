@@ -10,6 +10,7 @@ import {NgbTimeStruct,NgbTimepickerConfig} from '@ng-bootstrap/ng-bootstrap';
 
 import { ProjectsService } from '../../_services/projects.service';
 import { TeamService } from '../../_services/team.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 @Component({
   selector: 'app-projects',
@@ -30,12 +31,13 @@ export class ProjectsComponent implements OnInit {
 	toDate: NgbDate | null;
 
     constructor(
-  	    private toastrService: ToastrService,
+  	  private toastrService: ToastrService,
 	    private calendar: NgbCalendar,
 	    public formatter: NgbDateParserFormatter,
- 		private formBuilder: FormBuilder,
- 		private projectService: ProjectsService,
- 		private teamService: TeamService
+ 		  private formBuilder: FormBuilder,
+ 		  private projectService: ProjectsService,
+ 		  private teamService: TeamService,
+      private progressBar: ProgressBarService
   	) { }
 
     ngOnInit(): void {
@@ -69,17 +71,18 @@ export class ProjectsComponent implements OnInit {
     }
 
     getTeam(){
+      this.progressBar.startLoading();
      	this.teamService.getAll().subscribe(res=>{
      		if(res['status'] == 'error'){
      			this.toastrService.error(res['status'],res['message']);
-     			return;
      		}else{
-     			console.log(res);
      			this.teams = res['team_tree'];
      		}
+        this.progressBar.completeLoading();
      	},
      	err=>{
      		this.toastrService.error('Error','Get Teams Failed!');
+         this.progressBar.completeLoading();
      	})
     }
     createProject(){
@@ -107,20 +110,21 @@ export class ProjectsComponent implements OnInit {
 
     get f() { return this.searchForm.controls;}
     searchProject(){
+      this.progressBar.startLoading();
     	var  data_search = this.searchForm.value;
-    	console.log(data_search);
     	this.projectService.project(data_search)
     	.subscribe(res=>{
-    		console.log(res);
     		if(res['status'] == 'error'){
     			this.toastrService.error(res['status'],res['message']);
-    			return;
     		}
     		else{
     			this.projects = res;
     		}
-    	},err=>{
+        this.progressBar.completeLoading();
+    	},
+      err=>{
     		this.toastrService.error('Error','Get projects Failed!');
+        this.progressBar.completeLoading();
     	})
     }
     resetForm(){
@@ -134,19 +138,23 @@ export class ProjectsComponent implements OnInit {
 	}
 	delete(id){
 		if(window.confirm('Do yoy wanna delete this project')){
+      this.progressBar.startLoading();
 			this.projectService.delete(id).subscribe(res=>{
 				if(res['status'] == 'error'){
 					this.toastrService.error(res['status'],res['messsage']);
-					return;
 				}else{
 					this.projects = res['projects'];
 				}
-			},err=>{
+        this.progressBar.completeLoading();
+			},
+      err=>{
 				this.toastrService.error('Error','DelteFailed');
+        this.progressBar.completeLoading();
 			})
 		}
 	}
 	updateStatus(id,event){
+    this.progressBar.startLoading();
 		var data = {
 			'status' : event.srcElement.value
 		}
@@ -160,8 +168,11 @@ export class ProjectsComponent implements OnInit {
 				this.toastrService.success(res['status'],res['message']);
 			}
 			this.projects = res['projects'];
-		},err=>{
+      this.progressBar.completeLoading();
+		},
+    err=>{
 			this.toastrService.error('Error','Update Status Failed!');
+      this.progressBar.completeLoading();
 		})
 	}
 
@@ -198,6 +209,4 @@ export class ProjectsComponent implements OnInit {
 	    return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
 	}
 	// End Datepicker
-
-
 }

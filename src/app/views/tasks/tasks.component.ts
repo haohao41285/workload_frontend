@@ -11,6 +11,7 @@ import {NgbTimeStruct,NgbTimepickerConfig} from '@ng-bootstrap/ng-bootstrap';
 import { TrelloService } from '../../_services/trello.service';
 import { TaskService } from '../../_services/task.service';
 import { BoardService } from '../../_services/board.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 @Component({
   selector: 'app-tasks',
@@ -68,6 +69,7 @@ export class TasksComponent implements OnInit {
  		public formatter: NgbDateParserFormatter,
  		config: NgbTimepickerConfig,
  		private boardService: BoardService,
+ 		private progressBar: ProgressBarService
 
  	){
 		this.config = {
@@ -267,6 +269,7 @@ export class TasksComponent implements OnInit {
 	}
 	//Search task
 	searchTask(){
+		this.progressBar.startLoading();
 		var data_search = this.searchForm.value;
 		data_search.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
 		// data_search.token = localStorage.getItem('currentToken');
@@ -275,12 +278,15 @@ export class TasksComponent implements OnInit {
 			res=>{
 				if(res.status == "error"){
 					this.toastrService.error(res.status,res.message);
+					this.progressBar.completeLoading();
 					return;
 				}
 				this.tasks = res;
+				this.progressBar.completeLoading();
 			},
 			error=>{
 				this.toastrService.error("Error",this.ERROR_ALERT);
+				this.progressBar.completeLoading();
 			}
 		)
 	}

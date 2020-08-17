@@ -42,8 +42,10 @@
             </ngx-datatable-column>
             <ngx-datatable-column name="Action">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               <a href="javascript:void(0)" (click)="updateListTrello(row.id_board)"><span  tooltip="Update Trello's List" class="fa fa-refresh "></span></a>
-                <a href="javascript:void(0)"><span tooltip="Delete" (click)="deleteBoard(row.id)" class="fa fa-trash text-danger"></span></a>
+              <!--   <a href="javascript:void(0)" class="ml-2" (click)="updateListTrello(row.id_board)"><span  tooltip="Update Trello's List" class="fa fa-refresh "></span></a> -->
+                <a href="javascript:void(0)" class="ml-2"><span tooltip="Users" (click)="getUsers(row.id_board)" class="fa fa-user text-primary"></span></a>
+                <a href="javascript:void(0)" class="ml-2"><span tooltip="Lists" (click)="getList(row.id)" (click)="tableModal.show()"  class="fa fa-th-list text-success"></span></a>
+                <a href="javascript:void(0)" class="ml-2"><span tooltip="Delete" (click)="deleteBoard(row.id)" class="fa fa-trash text-danger"></span></a>
               </ng-template>
             </ngx-datatable-column>
           </ngx-datatable>
@@ -52,3 +54,106 @@
     </div>
   </div>
 </div>
+
+
+<!-- table modal -->
+<div bsModal #tableModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Trello Board's List</h4>
+        <button type="button" class="close" (click)="tableModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body px-1 py-1">
+        <div class="card-body">
+          <ngx-datatable class="bootstrap" [rows]="lists" [limit]="10" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50">
+            <ngx-datatable-column name="Name">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.name}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="IdList">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.idList}}
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-danger btn-sm" (click)="tableModal.hide()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end table modal -->
+
+<!-- user modal -->
+<div bsModal #userModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Trello Board's List</h4>
+        <button type="button" class="close" (click)="userModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body px-1 py-1">
+        <div class="card-body">
+          <div class=" row">
+            <div class="col-md-12">
+              <ngx-datatable class="bootstrap" [rows]="members" [limit]="10" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="50" (activate)="onActivate($event)"> 
+                <ngx-datatable-column name="Name">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row.fullName}}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Trello's Id">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row.id}}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Username">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                  <select (change)="updateUser(row.id,$event)" class="form-control form-control-sm">
+                    <option value="">__Choose User__</option>
+                    <option *ngFor="let u of users" [selected]="row.id===u.id_trello" value="{{u.id}}">{{u.name}} - {{u.email}}</option>
+                  </select>
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+            </div>
+            <!-- <div class="col-md-6">
+              <ngx-datatable class="bootstrap" [rows]="users" [limit]="10" [columnMode]="'force'"
+              [headerHeight]="50" [footerHeight]="50" [rowHeight]="50">
+                <ngx-datatable-column name="Name">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row.name}}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Trello's Id">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row.id_trello}}
+                  </ng-template>
+                </ngx-datatable-column>
+                <ngx-datatable-column name="Email">
+                  <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{row.email}}
+                  </ng-template>
+                </ngx-datatable-column>
+              </ngx-datatable>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-1">
+        <button type="button" class="btn btn-danger btn-sm" (click)="userModal.hide()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end user modal -->

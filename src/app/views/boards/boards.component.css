@@ -1,3 +1,6 @@
 ngx-datatable-cell{
 	border:1px red solid;
 }
+.clicked{
+	color:red;
+}

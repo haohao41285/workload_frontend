@@ -7,6 +7,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
 import {NgbDate, NgbCalendar, NgbDateParserFormatter,NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { TeamService } from '../../_services/team.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 @Component({
   selector: 'app-teams',
@@ -57,7 +58,8 @@ export class TeamsComponent implements OnInit {
 	  	private teamService: TeamService,
 		private calendar: NgbCalendar,
 		public formatter: NgbDateParserFormatter,
-		private formBuilder: FormBuilder
+		private formBuilder: FormBuilder,
+		private progressBar: ProgressBarService
   	) { }
 
 	ngOnInit(): void {
@@ -96,33 +98,39 @@ export class TeamsComponent implements OnInit {
 
 	//Teams
 	getAll(){
+		this.progressBar.startLoading();
 		this.teamService.getAll()
 		.subscribe(
 			res=> {
 				if(res['status'] == 'error'){
 					this.toastrService.error(res['status'],res['message']);
-					return;
+				}else{
+					this.teams = res['teams'];
+					this.team_tree = res['team_tree'];
 				}
-				this.teams = res['teams'];
-				this.team_tree = res['team_tree'];
+				this.progressBar.completeLoading();	
 			},
 			error => {
 				this.toastrService.error('Error','Get Teams Failed!');
+				this.progressBar.completeLoading();
 			})
 	}
 	searchTeam(){
+		this.progressBar.startLoading();
 		var  data_search = this.searchForm.value;
 		this.teamService.search(data_search)
 		.subscribe(res=>{
 			// console.log(res);return;
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
-				return;
+			}else{
+				this.teams = res;
 			}
-			this.teams = res;
+			this.progressBar.completeLoading();
 		},
 		error => {
 			this.toastrService.error('Error','Search Failed!');
+			this.progressBar.completeLoading();
 		})
 	}
 	resetForm(){
@@ -165,17 +173,19 @@ export class TeamsComponent implements OnInit {
 			})
 	}
 	createTeam(){
+		this.progressBar.startLoading();
 		var data = this.teamForm.value;
 		this.teamService.create(data)
 		.subscribe(res=>{
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
-				return;
+			}else{
+				this.toastrService.success(res['status'],res['message']);
+				this.teams = res['teams'];
+				this.infoModal.hide();
+				this.resetTeamForm();
 			}
-			this.toastrService.success(res['status'],res['message']);
-			this.teams = res['teams'];
-			this.infoModal.hide();
-			this.resetTeamForm();
+			this.progressBar.completeLoading();
 		},
 		error=> {
 			if(error.status == 422){
@@ -188,6 +198,7 @@ export class TeamsComponent implements OnInit {
 			}else{
 				this.toastrService.error('Error','Create Failed!');
 			}
+			this.progressBar.completeLoading();
 		})
 	}
 	resetTeamForm(){
@@ -214,43 +225,48 @@ export class TeamsComponent implements OnInit {
 			})
 	}
 	submitEditTeam(){
+		this.progressBar.startLoading();
 		var id = this.f.id.value;
 		var data = this.editTeamForm.value;
 		this.teamService.update(data,id)
 		.subscribe(res=>{
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
-				return;
+			}else{
+				this.toastrService.success(res['status'],res['message']);
+				this.teams = res['teams'];
+				this.hideEditModal();
 			}
-			this.toastrService.success(res['status'],res['message']);
-			this.teams = res['teams'];
-			this.hideEditModal();
+			this.progressBar.completeLoading();
 		},
 		error=>{
 			this.toastrService.error('Error','Update Team Failed!');
+			this.progressBar.completeLoading();
 		})
 	}
 	show(event){
+		this.progressBar.startLoading();
 		var id = event['id'];
 		var team_name = event['name'];
 		this.current_id_team = id;
 		this.teamService.show(id).subscribe(res=>{
-			console.log(res);
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
-				return;
 			}else{
 				this.toastrService.success(res['status'],res['message']);
 				this.user_list = res['users'];
 				this.teams_user = res['teams_user'];
 				this.team_name = team_name;
-
 			}
-		},err=>{
+			this.progressBar.completeLoading();
+		},
+		err=>{
 			this.toastrService.error('Error','Get List\' User Failed!');
+			this.progressBar.completeLoading();
 		})
 	}
 	addTeam(id){
+		this.progressBar.startLoading();
 		var data = {
 			'id' : id,
 			'id_team' : this.current_id_team
@@ -258,16 +274,20 @@ export class TeamsComponent implements OnInit {
 		this.teamService.addUserToTeam(data).subscribe(res=>{
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
-				return;
+			}else{
+				this.user_list = res['user_list'];
+				this.teams_user = res['teams_user'];
 			}
-			this.user_list = res['user_list'];
-			this.teams_user = res['teams_user'];
-		},err=>{
+			this.progressBar.completeLoading();
+		},
+		err=>{
 			this.toastrService.error('Error','Add User to Team Failed!');
+			this.progressBar.completeLoading();
 		})
 	}
 	removeTeam(id){
 		if(confirm('Do You want remove this user?')){
+			this.progressBar.startLoading();
 			var data = {
 			    id : id,
 			    id_team : this.current_id_team
@@ -275,13 +295,16 @@ export class TeamsComponent implements OnInit {
 			this.teamService.removeUserOutTeam(data).subscribe(res=>{
 				if(res['status'] == 'error'){
 					this.toastrService.error(res['status'],res['message']);
-					return;
+				}else{
+					this.toastrService.success(res['status'],res['message']);
+					this.user_list = res['user_list'];
+					this.teams_user = res['teams_user'];
 				}
-				this.toastrService.success(res['status'],res['message']);
-				this.user_list = res['user_list'];
-				this.teams_user = res['teams_user'];
-			},err=>{
+				this.progressBar.completeLoading();
+			},
+			err=>{
 				this.toastrService.error('Error','Remove User Failed!');
+				this.progressBar.completeLoading();
 			})
 		}else{
 			return;
@@ -289,7 +312,7 @@ export class TeamsComponent implements OnInit {
 			
 	}
 
-	//Scroll to a element
+	//Scroll to a element (users)
 	scroll(el: HTMLElement) {
 	    el.scrollIntoView();
 	}

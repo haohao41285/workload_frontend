@@ -5,6 +5,7 @@ import { BoardsRoutingModule } from './boards-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [BoardsComponent],
@@ -15,6 +16,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     FormsModule,
     NgxDatatableModule,
     TooltipModule.forRoot(),
+    ModalModule
   ]
 })
 export class BoardsModule { }

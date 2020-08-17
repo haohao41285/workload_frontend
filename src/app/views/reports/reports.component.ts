@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {NgbDate, NgbCalendar, NgbDateParserFormatter,NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { ReportsService } from '../../_services/reports.service';
+import { ProgressBarService } from '../../_services/progress-bar.service';
 
 @Component({
   selector: 'app-reports',
@@ -28,7 +29,8 @@ export class ReportsComponent implements OnInit {
 	private calendar: NgbCalendar,
 	public formatter: NgbDateParserFormatter,
 	private formBuilder: FormBuilder,
-	private reportService: ReportsService
+	private reportService: ReportsService,
+	private progressBar: ProgressBarService
   	) { }
 
 	ngOnInit(): void {
@@ -68,18 +70,20 @@ export class ReportsComponent implements OnInit {
 	}
 
   	searchReport(){
+  		this.progressBar.startLoading();
   		var data  = this.searchForm.value;
   		this.reportService.searchReport(data)
   		.subscribe(res=>{
   			if(res['status'] == 'error'){
   				this.toastrService.error(res['status'],res['message']);
-  				return;
   			}
   			else{
   				this.tasks = res;
   			}
+  			this.progressBar.completeLoading();
   		},err=>{
   			this.toastrService.error('Error','Load Tasks Report Failed!');
+  			this.progressBar.completeLoading();
   		})
 
   	}

@@ -67,4 +67,22 @@ export class BoardService {
         return res;
       }))
     }
+    getList(idBoard){
+      return this.http.get(`${environment.apiUrl}/board/${idBoard}/lists`)
+      .pipe(res=>{
+        return res;
+      })
+    }
+    getUsers(idBoard){
+      return this.http.get(`${environment.apiUrl}/board/${idBoard}/users`)
+      .pipe(res=>{
+        return res;
+      })
+    }
+    updateIdTrelloToUser(data){
+      return this.http.post(`${environment.apiUrl}/board/update-id-trello-to-user`,data)
+        .pipe(map(res=>{
+          return res;
+        }))
+    }
 }
