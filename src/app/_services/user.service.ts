@@ -51,4 +51,22 @@ export class UserService {
           return res;
       }))
     }
+    getOne(id){
+      return this.http.get(`${environment.apiUrl}/user/${id}/get-one`)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
+    updateOne(id,data){
+      return this.http.post(`${environment.apiUrl}/user/${id}/update-one`,data)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
+    updatePassword(id,data){
+      return this.http.post(`${environment.apiUrl}/user/${id}/update-password`,data)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
 }
