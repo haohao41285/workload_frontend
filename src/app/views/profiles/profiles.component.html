@@ -1,0 +1,95 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> <b>Profile</b>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="updateForm" (ngSubmit)="update()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Username</label>
+                  <input type="text" class="form-control form-control-sm" formControlName="name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Fullname</label>
+                  <input type="text" class="form-control form-control-sm" formControlName="full_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Email</label>
+                  <input type="email" class="form-control form-control-sm" formControlName="email">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Key ( Trello )</label>
+                  <input type="text" class="form-control form-control-sm" formControlName="key">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Token ( Trello )</label>
+                  <input type="text" class="form-control form-control-sm" formControlName="token">
+                </div>
+              </div>
+              <div class="col-md-12 ">
+                <button type="reset" class="btn btn-sm btn-danger float-left">Reset</button>
+                <button type="submit" [disabled]="!updateForm.valid" class="btn btn-sm btn-primary float-left ml-2">Update</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> <b>Change Password</b>
+        </div>
+        <div class="card-body">
+          <form>
+             <div class="row">
+                <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Current</label>
+                  <input type="text" class="form-control form-control-sm" name="">
+                </div>
+              </div>
+              <div class="col-md-6"></div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">New Password</label>
+                  <input type="text" class="form-control form-control-sm" name="">
+                </div>
+              </div>
+              <div class="col-md-6"></div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="name">Repeat New Password</label>
+                  <input type="email" class="form-control form-control-sm" name="">
+                </div>
+              </div>
+              <div class="col-md-6"></div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <button type="reset" class="btn btn-sm btn-danger float-left">Reset</button>
+                  <button type="submit" class="btn btn-sm btn-primary float-left ml-2">Update</button>
+                </div>
+              </div>
+             </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

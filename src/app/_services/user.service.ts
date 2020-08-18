@@ -39,4 +39,16 @@ export class UserService {
         return res;
       }))
     }
+    changePass(id,data){
+      return this.http.post(`${environment.apiUrl}/user/${id}/change-password`,data)
+        .pipe(map(res=>{
+          return res;
+      }))
+    }
+    updateStatus(id,data){
+      return this.http.post(`${environment.apiUrl}/user/${id}/update-status`,data)
+        .pipe(map(res=>{
+          return res;
+      }))
+    }
 }

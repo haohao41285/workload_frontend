@@ -23,6 +23,7 @@ export class UsersComponent implements OnInit {
 	searchForm : FormGroup;
 	editForm: FormGroup;
 	team_tree:any;
+	passwordForm : FormGroup;
 
 	//creater team modal
 	@ViewChild('infoModal') public infoModal:ModalDirective;
@@ -44,6 +45,7 @@ export class UsersComponent implements OnInit {
 	  	this.getUsers();
 		this.createSearchForm();
 		this.createEditForm();
+		this.createPasswordForm();
 	}
 
 	get f(){ return this.editForm.controls;}
@@ -72,7 +74,6 @@ export class UsersComponent implements OnInit {
   			key: ['']
   		});
   	}
-
   	//User
   	//get all users
 	getUsers(){
@@ -143,12 +144,6 @@ export class UsersComponent implements OnInit {
 		this.infoModal.show();
 	}
 	updateUser(){
-		// if( this.f.new_password.value != ""
-		// 	&& this.f.re_new_password.value != ""
-		// 	&& this.f.new_password.value != this.f.re_new_password.value){
-		// 	this.toastrService.error('Error','New password not match!');
-		// 	return;
-		// }
 		this.progressBar.startLoading();
 		var id = this.f.id.value;
 		var data = this.editForm.value;
@@ -185,6 +180,103 @@ export class UsersComponent implements OnInit {
 			}
 		})
 	}
+
+	// UPDATE PASSWORD
+  	createPasswordForm(){
+  		this.passwordForm = this.formBuilder.group({
+  			name : [{value:"",disabled:true}],
+  			new_password : [{value:'',disabled:true}, Validators.required],
+  			re_new_password : ['', Validators.required],
+  			id : ['']
+  		});
+  	}
+
+	get p() {return this.passwordForm.controls; }
+
+	showUpdatePass(row){
+		this.p.name.setValue(row.name);
+		this.p.id.setValue(row.id);
+	}
+	generatePassword(){
+		var number = Math.floor((Math.random() * 10) + 1);
+		var hash = this.makeid(9);
+		var new_password = "*"+number+hash;
+		this.p.new_password.setValue(new_password);
+		this.p.re_new_password.setValue(new_password);
+	}
+	makeid(length) {
+	   var result           = '';
+	   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	   var charactersLength = characters.length;
+	   for ( var i = 0; i < length; i++ ) {
+	      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	   }
+	   return result;
+	}
+	copyClipboard() {
+		var new_password = this.p.new_password.value;
+		if(new_password == ""){
+			return;
+		}
+		let selBox = document.createElement('textarea');
+	    selBox.style.position = 'fixed';
+	    selBox.style.left = '0';
+	    selBox.style.top = '0';
+	    selBox.style.opacity = '0';
+	    selBox.value = this.p.new_password.value;
+	    document.body.appendChild(selBox);
+	    selBox.focus();
+	    selBox.select();
+	    document.execCommand('copy');
+	    document.body.removeChild(selBox);
+	    this.toastrService.success('Success','Copied to Clipboard');
+	}
+	updatePassword(){
+		this.progressBar.startLoading();
+		var data = this.passwordForm.value;
+	 	var id = this.p.id.value;
+	 	this.userService.changePass(id, data).subscribe(
+	 		res=>{
+	 		if(res['status'] == 'error'){
+	 			if( typeof(res['message']) == 'string' ){
+	 				this.toastrService.error(res['status'],res['message']);
+	 			}else{
+	 				for(let i in res['message']){
+	 					this.toastrService.error(res['status'],res['message'][i]);
+	 				}
+	 			}
+	 		}else{
+	 			this.toastrService.success(res['status'],res['message']);
+	 			this.passwordModal.hide();
+	 			this.passwordForm.reset();
+	 		}
+	 		this.progressBar.completeLoading();
+	 	},err=>{
+	 		this.toastrService.error('Error','Update Password Failed!');
+	 		this.progressBar.completeLoading();
+	 	})
+	}
+	switch(row){
+		this.progressBar.startLoading();
+		var id = row.id;
+		var data = {
+			active : row.active
+		}
+		this.userService.updateStatus(id,data).subscribe(
+			res=>{
+				if(res['status'] == 'error'){
+					this.toastrService.error(res['status'],res['message']);
+				}else{
+					this.toastrService.success(res['status'],res['message']);
+				}
+				this.progressBar.completeLoading();
+				this.users = res['users'];
+			},err=>{
+				this.toastrService.error('Error','Update Failed!');
+				this.progressBar.completeLoading();
+			})
+	}
+
 
 	//Datepicker
 	onDateSelection(date: NgbDate) {

@@ -101,11 +101,29 @@
                <ng-template #showNameTeam >{{row.team.name}}</ng-template>
               </ng-template>
             </ngx-datatable-column>
+            <ngx-datatable-column name="Active">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+
+                <span *ngIf="row.active == 1;else showNotChecked" >
+                  <label class="switch switch-pill switch-outline-primary-alt">
+                    <input type="checkbox" (change)="switch(row)" class="switch-input" checked>
+                    <span class="switch-slider"></span>
+                  </label>
+                </span>
+               <ng-template #showNotChecked >
+                 <label class="switch switch-pill switch-outline-primary-alt">
+                  <input type="checkbox" (change)="switch(row)" class="switch-input">
+                  <span class="switch-slider"></span>
+                </label>
+               </ng-template>
+
+              </ng-template>
+            </ngx-datatable-column>
             <ngx-datatable-column name="Action">
               <ng-template let-row="row" ngx-datatable-cell-template>
                 <a href="javascript:void(0)" (click)="edit(row)"><span  tooltip="Edit" class="fa fa-edit "></span></a>
-                <a href="javascript:void(0)" class="ml-2"><span (click)="passwordModal.show()" tooltip="Change Password" class="icon-ghost text-success"></span></a>
-                <a href="javascript:void(0)" class="ml-2"><span tooltip="Delete" (click)="delete(row.id)" class="fa fa-trash text-danger"></span></a>
+                <a href="javascript:void(0)" class="ml-2"><span (click)="passwordModal.show()" tooltip="Change Password" (click)="showUpdatePass(row)" class="icon-ghost text-success"></span></a>
+               <!--  <a href="javascript:void(0)" class="ml-2"><span tooltip="Delete" (click)="delete(row.id)" class="fa fa-trash text-danger"></span></a> -->
               </ng-template>
             </ngx-datatable-column>
           </ngx-datatable>
@@ -152,7 +170,7 @@
           </div>
         <div class="modal-footer py-1">
           <button type="reset" class="btn btn-danger btn-sm" (click)="infoModal.hide()">Close</button>
-          <button type="submit" [disabled]="!editForm.valid"  class="btn btn-primary btn-sm">Add</button>
+          <button type="submit" [disabled]="!editForm.valid"  class="btn btn-primary btn-sm">Update</button>
         </div>
       </form>
     </div>
@@ -171,7 +189,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form [formGroup]="editForm" (ngSubmit)="updateUser()">
+      <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
           <div class="modal-body px-1 py-1">
             <div class="card-body">
                 <div class="form-group my-1">
@@ -179,18 +197,18 @@
                   <input type="text" class="form-control form-control-sm" formControlName="name">
                 </div>
                 <div class="form-group my-1">
-                  <label for="new_password">New Password</label>
-                  <input type="password" id="new_password" class="form-control form-control-sm" formControlName="new_password">
-                </div>
-                <div class="form-group my-1">
-                  <label for="re_new_password">Repeat New Password</label>
-                  <input type="password" id="re_new_password" class="form-control form-control-sm" formControlName="re_new_password">
+                  <label for="re_new_password">New Password</label>
+                  <div class="form-inline">
+                    <input type="text" id="new_password" #new_password class="form-control form-control-sm" formControlName="new_password">
+                    <button type="button" (click)="copyClipboard()" class="btn btn-sm btn-success ml-2 ">Copy to Clipboard</button>
+                    <button type="button" (click)="generatePassword()" class="btn btn-sm btn-secondary ml-2 float-right">Generate Password</button>
+                  </div>
                 </div>
             </div>
           </div>
         <div class="modal-footer py-1">
-          <button type="reset" class="btn btn-danger btn-sm" (click)="passwordModal.hide()">Close</button>
-          <button type="submit" [disabled]="!editForm.valid"  class="btn btn-primary btn-sm">Add</button>
+          <button type="reset" class="btn btn-danger btn-sm" (click)="passwordModal.hide()">Cancle</button>
+          <button type="submit" [disabled]="!passwordForm.valid"  class="btn btn-primary btn-sm">Update</button>
         </div>
       </form>
     </div>
