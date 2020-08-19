@@ -10,32 +10,32 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Username</label>
+                  <label class="required"><b>Username</b></label>
                   <input type="text" class="form-control form-control-sm" formControlName="name">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Fullname</label>
+                  <label class="required"><b>Fullname</b></label>
                   <input type="text" class="form-control form-control-sm" formControlName="full_name">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Email</label>
+                  <label class="required"><b>Email</b></label>
                   <input type="email" class="form-control form-control-sm" formControlName="email">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Key ( Trello )</label>
+                  <label for="name"><b>Key ( Trello )</b></label>
                   <i> Take key and token Trello at <a href="https://trello.com/app-key" target="_blank" title=""><i><b>here</b></i></a> ( must loggin before )</i>
                   <input type="text" class="form-control form-control-sm" formControlName="key">
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Token ( Trello )</label>
+                  <label for="name"><b>Token ( Trello )</b></label>
                   <input type="text" class="form-control form-control-sm" formControlName="token">
                 </div>
               </div>
@@ -62,22 +62,23 @@
              <div class="row">
                 <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Current Password</label>
-                  <input type="text" class="form-control form-control-sm" formControlName="password">
+                  <label class="required"><b>Current Password</b></label>
+                  <input type="password" class="form-control form-control-sm" formControlName="password">
                 </div>
               </div>
               <div class="col-md-6"></div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">New Password</label>
-                  <input type="text" class="form-control form-control-sm" formControlName="new_password">
+                  <label class="required"><b>New Password</b></label><span>(With ISO rule)</span>
+                  <input type="password" class="form-control form-control-sm" formControlName="new_password">
                 </div>
               </div>
               <div class="col-md-6"></div>
               <div class="col-md-6">
                 <div class="form-group">
-                  <label for="name">Repeat New Password</label>
-                  <input type="email" class="form-control form-control-sm" formControlName="re_new_password">
+                  <label class="required"><b>Repeat New Password</b></label>
+                  <input type="password" class="form-control form-control-sm" formControlName="re_new_password">
+                  <span *ngIf="showWarning" class="text-danger"><i> * Password not match</i></span>
                 </div>
               </div>
               <div class="col-md-6"></div>

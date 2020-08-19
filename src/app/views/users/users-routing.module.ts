@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { UsersComponent } from './users.component';
+import { RolesComponent } from './roles.component';
+import { RolePermissionComponent } from './role-permission.component';
 
 const routes: Routes = [
   {
@@ -22,14 +24,14 @@ const routes: Routes = [
       },
       {
         path: 'roles',
-        component: UsersComponent,
+        component: RolesComponent,
         data: {
           title: 'Roles'
         }
       },
       {
         path: 'permissions',
-        component: UsersComponent,
+        component: RolePermissionComponent,
         data: {
           title: 'Permissions'
         }
