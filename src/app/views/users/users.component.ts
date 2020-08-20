@@ -9,6 +9,7 @@ import {NgbDate, NgbCalendar, NgbDateParserFormatter,NgbDateStruct} from '@ng-bo
 import { UserService } from '../../_services/user.service';
 import { TeamService } from '../../_services/team.service';
 import { ProgressBarService } from '../../_services/progress-bar.service';
+import { RolesService } from '../../_services/roles.service';
 
 @Component({
   selector: 'app-users',
@@ -24,6 +25,8 @@ export class UsersComponent implements OnInit {
 	editForm: FormGroup;
 	team_tree:any;
 	passwordForm : FormGroup;
+	roles: any;
+	role_selected = JSON.parse(localStorage.getItem('currentUser')).id_role;
 
 	//creater team modal
 	@ViewChild('infoModal') public infoModal:ModalDirective;
@@ -36,7 +39,8 @@ export class UsersComponent implements OnInit {
 		public formatter: NgbDateParserFormatter,
 		private formBuilder: FormBuilder,
 		private teamService: TeamService,
-		private progressBar: ProgressBarService
+		private progressBar: ProgressBarService,
+		private rolesService: RolesService
   	) {
     	// this.setFromToDate();
     }
@@ -71,7 +75,8 @@ export class UsersComponent implements OnInit {
   			re_new_password : [''],
   			id: ['',Validators.required],
   			token : [''],
-  			key: ['']
+  			key: [''],
+  			id_role : ['']
   		});
   	}
   	//User
@@ -137,6 +142,17 @@ export class UsersComponent implements OnInit {
 	}
 	edit(row){
 		console.log(row);
+		this.rolesService.roles().subscribe(
+			res=>{
+				if(res['status'] == 'error'){
+					this.toastrService.error(res['status'],res['message']);
+				}else{
+					this.roles = res;
+				}
+			},err=>{
+				this.toastrService.error('Error','Get roles Failed!');
+			})
+
 		this.f.name.setValue(row.name);
 		this.f.id.setValue(row.id);
 		this.f.key.setValue(row.key);

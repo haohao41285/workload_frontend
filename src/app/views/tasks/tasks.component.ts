@@ -12,6 +12,7 @@ import { TrelloService } from '../../_services/trello.service';
 import { TaskService } from '../../_services/task.service';
 import { BoardService } from '../../_services/board.service';
 import { ProgressBarService } from '../../_services/progress-bar.service';
+import { ProjectsService } from '../../_services/projects.service';
 
 @Component({
   selector: 'app-tasks',
@@ -69,7 +70,8 @@ export class TasksComponent implements OnInit {
  		public formatter: NgbDateParserFormatter,
  		config: NgbTimepickerConfig,
  		private boardService: BoardService,
- 		private progressBar: ProgressBarService
+ 		private progressBar: ProgressBarService,
+ 		private projectsService: ProjectsService
 
  	){
 		this.config = {
@@ -85,7 +87,7 @@ export class TasksComponent implements OnInit {
   		this.cardForm = this.formBuilder.group({
   			name : ['',Validators.required],
   			expired_date : [this.calendar.getNext(this.calendar.getToday(), 'd', 3),Validators.required],
-  			idMembers  : [''],
+  			idMembers  : ['', Validators.required],
   			idList : ['',Validators.required],
   			desc : [''],
   			time_start : [this.time],
@@ -100,6 +102,7 @@ export class TasksComponent implements OnInit {
   		this.setProgressingArr();
   		this.createLogForm();
   		this.createExtendForm();
+  		this.getProjects();
   	}
 
   	setProgressingArr(){
@@ -117,7 +120,7 @@ export class TasksComponent implements OnInit {
   		this.logForm = this.formBuilder.group({
   			date_work: ['', Validators.required],
   			time_work_per_day : ['', Validators.required],
-  			comment : [''],
+  			comment : ['', Validators.required],
   			id_user : [''],
   			id_task_detail : [''],
   			id_task :[''],
@@ -141,7 +144,8 @@ export class TasksComponent implements OnInit {
   			name : [''],
   			from : [this.formatter.format(this.fromDate), Validators.required],
   			to: [this.formatter.format(this.toDate), Validators.required],
-  			status: ['all']
+  			status: ['all'],
+  			id_project : ['']
   		});
   	}
   	createUpdateForm(){
@@ -158,10 +162,19 @@ export class TasksComponent implements OnInit {
   		});
   	}
 
-	pageChanged(event){
-		this.config.currentPage = event;
-	}
-
+  	//Get Projects
+  	getProjects(){
+  		this.projectsService.getProject().subscribe(
+  			res=>{
+  				if(res['status'] == 'error'){
+  					this.toastrService.error(res['status'],res['message']);
+  				}else{
+  					this.projects = res;
+  				}
+  			},err=>{
+  				this.toastrService.error('Error','Get Projects Failed!');
+  			})
+  	}
 	//Cards function
 	// get f() { return this.cardForm.controls; }
 
@@ -209,17 +222,18 @@ export class TasksComponent implements OnInit {
 		this.data.due = end_date+" "+time_end+":00";
 		this.data.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
 
+		this.progressBar.startLoading();
 		//Push task to card Trello
 		this.trelloService.createCard(this.data)
 		.subscribe(
 			res => {
 				this.data.id_trello = res.id;
 				this.saveDatabase();
+				this.progressBar.completeLoading();
 			},
 			error => {
-				console.log(error);
-				this.toastrService.error('',"Error");
-				return;
+				this.toastrService.error('',"Create Task Failed!");
+				this.progressBar.completeLoading();
 			});
 	}
 
@@ -297,6 +311,7 @@ export class TasksComponent implements OnInit {
 	    this.searchForm.get('to').setValue(this.formatter.format(this.toDate));
 	    this.searchForm.get('from').setValue(this.formatter.format(this.fromDate));
 	    this.searchForm.get('status').setValue('all');
+	    this.searchForm.get('id_project').setValue('');
 	    this.searchTask();
 	}
 	get f(){ return this.updateForm.controls;}

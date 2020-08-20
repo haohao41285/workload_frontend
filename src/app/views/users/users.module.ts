@@ -10,6 +10,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { UsersRoutingModule } from './users-routing.module';
 import { RolesComponent } from './roles.component';
 import { RolePermissionComponent } from './role-permission.component';
+import { RoleGuard } from '../../_helpers/role.guard';
 
 @NgModule({
   declarations: [UsersComponent, RolesComponent, RolePermissionComponent],
@@ -22,6 +23,7 @@ import { RolePermissionComponent } from './role-permission.component';
     ReactiveFormsModule,
     NgbModule,
     ModalModule
-  ]
+  ],
+  providers: [RoleGuard]
 })
 export class UsersModule { }

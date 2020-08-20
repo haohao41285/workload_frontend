@@ -64,6 +64,7 @@ export class LoginComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
+                    console.log(data);
                 	if(data['status'] === 'error'){
                 		this.toastrService.error(data['status'],data['msg']);
                 		return;

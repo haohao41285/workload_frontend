@@ -105,13 +105,13 @@
               <ng-template let-row="row" ngx-datatable-cell-template>
 
                 <span *ngIf="row.active == 1;else showNotChecked" >
-                  <label class="switch switch-pill switch-outline-primary-alt">
+                  <label class="switch switch-sm switch-pill switch-outline-primary-alt">
                     <input type="checkbox" (change)="switch(row)" class="switch-input" checked>
                     <span class="switch-slider"></span>
                   </label>
                 </span>
                <ng-template #showNotChecked >
-                 <label class="switch switch-pill switch-outline-primary-alt">
+                 <label class="switch switch-sm switch-pill switch-outline-primary-alt">
                   <input type="checkbox" (change)="switch(row)" class="switch-input">
                   <span class="switch-slider"></span>
                 </label>
@@ -150,14 +150,13 @@
                   <label for="name required">Name</label>
                   <input type="text" class="form-control form-control-sm" formControlName="name">
                 </div>
-                <!-- <div class="form-group my-1">
-                  <label for="new_password">New Password</label>
-                  <input type="password" id="new_password" class="form-control form-control-sm" formControlName="new_password">
-                </div>
                 <div class="form-group my-1">
-                  <label for="re_new_password">Repeat New Password</label>
-                  <input type="password" id="re_new_password" class="form-control form-control-sm" formControlName="re_new_password">
-                </div> -->
+                  <label for="name required">Role</label>
+                  <select class="form-control form-control-sm" formControlName="id_role">
+                    <option></option>
+                    <option *ngFor="let r of roles" [selected]="r.id === role_selected" value="{{r.id}}">{{r.name}}</option>
+                  </select>
+                </div>
                 <div class="form-group my-1">
                   <label for="key">Key( Trello )</label>
                   <input type="text" id="key" class="form-control form-control-sm" formControlName="key">

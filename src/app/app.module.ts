@@ -55,6 +55,9 @@ import { NgProgressModule } from 'ngx-progressbar';
 import { NgProgressRouterModule } from 'ngx-progressbar/router';
 import { NgProgressHttpModule } from 'ngx-progressbar/http';
 
+//Role Guard
+import { RoleGuard } from './_helpers/role.guard';
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -91,8 +94,10 @@ import { NgProgressHttpModule } from 'ngx-progressbar/http';
   ],
   providers: [{
     provide: LocationStrategy,
-    useClass: HashLocationStrategy
-  }],
+    useClass: HashLocationStrategy,
+  },
+    RoleGuard
+  ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

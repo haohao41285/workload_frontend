@@ -12,24 +12,20 @@
             </thead>
             <tbody>
               <tr *ngFor="let p of permissions">
-                <td>{{p.name}}</td>
-                <td>
-                   <label class="switch switch-pill switch-outline-primary-alt">
-                    <input type="checkbox" (change)="switch(row)" class="switch-input" checked>
-                    <span class="switch-slider"></span>
-                  </label>
-                </td>
-                <td>
-                   <label class="switch switch-pill switch-outline-primary-alt">
-                    <input type="checkbox" (change)="switch(row)" class="switch-input" checked>
-                    <span class="switch-slider"></span>
-                  </label>
-                </td>
-                <td>
-                   <label class="switch switch-pill switch-outline-primary-alt">
-                    <input type="checkbox" (change)="switch(row)" class="switch-input" checked>
-                    <span class="switch-slider"></span>
-                  </label>
+                <td><b>{{p.name}}</b></td>
+                <td *ngFor="let r of roles">
+                  <span *ngIf="checkPermission(p.id,r) == 1;else showPermission">
+                     <label class="switch switch-pill switch-sm switch-outline-primary-alt">
+                      <input type="checkbox" (change)="switch(p.id,r.id)" class="switch-input" checked>
+                      <span class="switch-slider"></span>
+                    </label>
+                  </span>
+                  <ng-template #showPermission>
+                    <label class="switch switch-pill switch-sm switch-outline-primary-alt">
+                      <input type="checkbox" (change)="switch(p.id,r.id)" class="switch-input">
+                      <span class="switch-slider"></span>
+                    </label>
+                  </ng-template>
                 </td>
               </tr>
             </tbody>

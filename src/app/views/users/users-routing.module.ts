@@ -4,6 +4,8 @@ import { UsersComponent } from './users.component';
 import { RolesComponent } from './roles.component';
 import { RolePermissionComponent } from './role-permission.component';
 
+import { RoleGuard } from '../../_helpers/role.guard';
+
 const routes: Routes = [
   {
     path: '',
@@ -13,10 +15,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'users'
+        redirectTo: 'list'
       },
       {
         path: 'list',
+        canLoad: [RoleGuard],
         component: UsersComponent,
         data: {
           title: 'Users'
@@ -24,6 +27,7 @@ const routes: Routes = [
       },
       {
         path: 'roles',
+        canLoad: [RoleGuard],
         component: RolesComponent,
         data: {
           title: 'Roles'
@@ -31,6 +35,7 @@ const routes: Routes = [
       },
       {
         path: 'permissions',
+        canLoad: [RoleGuard],
         component: RolePermissionComponent,
         data: {
           title: 'Permissions'

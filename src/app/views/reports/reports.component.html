@@ -4,6 +4,12 @@
 		 <div class="card">
         	<div class="card-body">
         	  <form [formGroup]="searchForm" (ngSubmit)="searchReport()" class="form-inline">
+              <div class="form-group mt-1  ml-1">
+                <select class="form-control form-control-sm" formControlName="id_project">
+                  <option value="">ALL Project</option>
+                  <option *ngFor="let p of projects" value="{{p.id}}">{{p.name}}</option>
+                </select>
+              </div>
               <div class="form-group mt-1 ml-1">
                 <input type="text" class="form-control form-control-sm" placeholder="Enter Title" formControlName="name">
               </div>

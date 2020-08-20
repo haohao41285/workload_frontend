@@ -4,10 +4,16 @@
 		 <div class="card">
         	<div class="card-body">
         	  <form [formGroup]="searchForm" (ngSubmit)="searchTask()" class="form-inline">
-              <div class="form-group mx-1">
+              <div class="form-group mt-1  ml-1">
+                <select class="form-control form-control-sm" formControlName="id_project">
+                  <option value="">ALL Project</option>
+                  <option *ngFor="let p of projects" value="{{p.id}}">{{p.name}}</option>
+                </select>
+              </div>
+              <div class="form-group mt-1  ml-1">
                 <input type="text" class="form-control form-control-sm" placeholder="Enter Title" formControlName="name">
               </div>
-            	<div class="form-group hidden">
+            	<div class="form-group hidden  mt-1  ml-1">
                 <div class="input-group">
                   <input name="datepicker"
                          class="form-control form-control-sm"
@@ -31,7 +37,7 @@
                   </ng-template>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group mt-1">
                 <div class="input-group">
                   <input #dpFromDate
                          class="form-control form-control-sm" placeholder="yyyy-mm-dd"
@@ -44,7 +50,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group ml-2">
+              <div class="form-group  mt-1  ml-2">
                 <div class="input-group">
                   <input #dpToDate
                          class="form-control form-control-sm" placeholder="yyyy-mm-dd"
@@ -57,17 +63,19 @@
                   </div>
                 </div>
               </div>
-            	<div class="form-group mx-1">
-             		 <select class="form-control form-control-sm" formControlName="status">
+            	<div class="form-group  mt-1  ml-1">
+             		<select class="form-control form-control-sm" formControlName="status">
              		 	<option value="all">--ALL--</option>
-		                <option value="1">NEW</option>
-		                <option value="2">PROGRESSING</option>
-		                <option value="3">DONE</option>
-		                <option value="4">REOPEN</option>
-		              </select>
+		              <option value="1">NEW</option>
+		              <option value="2">PROGRESSING</option>
+		              <option value="3">DONE</option>
+		              <option value="4">REOPEN</option>
+		            </select>
             	</div>
-             		<button type="submit"  [disabled]="!searchForm.valid" class="btn btn-sm btn-primary mx-1"><i class="fa fa-search"></i> Search</button>
-          			<button type="button" [disabled]="!searchForm.valid" (click)="resetForm()" class="btn btn-sm btn-danger mx-1"><i class="fa fa-refresh"></i> Reset</button>
+              <div class="form-group  mt-1  ml-1">
+                <button type="submit"  [disabled]="!searchForm.valid" class="btn btn-sm btn-primary mx-1"><i class="fa fa-search"></i> Search</button>
+                <button type="button" [disabled]="!searchForm.valid" (click)="resetForm()" class="btn btn-sm btn-danger mx-1"><i class="fa fa-refresh"></i> Reset</button>
+              </div>
           	</form>
         </div>
     </div>
@@ -143,29 +151,32 @@
         <div class="modal-body px-1 py-1">
           <div class="card-body mt-0 pt-0">
             <div class="form-group my-1">
-              <label for="name required">Title</label>
+              <label class="required">Title</label>
               <input type="text" class="form-control form-control-sm" formControlName="name" required id="name">
             </div>
             <div class="form-group my-1">
-              <label for="required">Project</label>
+              <label class="required">Project</label>
               <select class="form-control form-control-sm" (change)="getList()" formControlName="id_project">
+                <option></option>
                 <option *ngFor="let p of projects" value="{{p.id}}">{{p.name}}</option>
               </select>
             </div>
             <div class="form-group my-1">
-              <label for="required">Trello Board</label>
+              <label class="required">Trello Board</label>
               <select class="form-control form-control-sm" (change)="getList()" formControlName="idBoard">
+                <option></option>
                 <option *ngFor="let b of board" value="{{b.id}}">{{b.name}}</option>
               </select>
             </div>
             <div class="form-group my-1">
-              <label for="idList required">List</label>
+              <label class="required">List</label>
               <select name="list" formControlName="idList" class="form-control form-control-sm">
+                <option></option>
                 <option *ngFor="let l of list" value="{{l.idList}}">{{l.name}}</option>
               </select>
             </div>
             <div class="form-group my-1">
-              <label>Assign</label>
+              <label class="required">Assign</label>
               <ng-select [items]="idMembers"
                 bindLabel="name"
                 bindValue="id_trello"
@@ -179,7 +190,7 @@
               </ng-select>
             </div>
             <div class="form-group my-1">
-              <label for="date_start required">Date Start</label>
+              <label class="required">Date Start</label>
               <div class="row">
                 <div class="col-md-4">
                   <ngb-timepicker formControlName="time_start" ></ngb-timepicker>
@@ -196,7 +207,7 @@
               </div>
             </div>
             <div class="form-group my-1">
-              <label for="date_expired required">Deadline</label>
+              <label class="required">Deadline</label>
               <div class="row">
                 <div class="col-md-4">
                   <ngb-timepicker formControlName="time_end" ></ngb-timepicker>
@@ -212,20 +223,6 @@
                 </div>
               </div>
             </div>
-           <!--  <div class="form-group my-1">
-              <label>Assign</label>
-              <ng-select [items]="idMembers"
-                bindLabel="name"
-                bindValue="id_trello"
-                placeholder="Select item"
-                appendTo="body"
-                multiple="true"
-                [searchable]="true" 
-                [clearable]="true"
-                [closeOnSelect]="false"
-                formControlName="idMembers">
-              </ng-select>
-            </div> -->
             <div class="form-group my-1">
               <label for="desc">Description</label>
               <textarea class="form-control form-control-sm" id="desc" formControlName="desc" rows="3"></textarea>
@@ -256,11 +253,11 @@
         <div class="modal-body px-1 py-1">
           <div class="card-body">
             <div class="form-group my-1">
-              <label for="name required">Title</label>
+              <label class="required">Title</label>
               <input type="text" class="form-control form-control-sm" formControlName="name">
             </div>
             <div class="form-group my-1">
-              <label for="name required">Detail Progressing (%)</label>
+              <label  class="required">Detail Progressing (%)</label>
               <select class="form-control form-control-sm" (change)="calculate()" formControlName="detail_progressing">
                 <option *ngFor="let p of progressing_arr" value="{{p}}">{{p}}</option>
               </select>
@@ -313,7 +310,7 @@
         <div class="modal-body px-1 py-1">
           <div class="card-body">
             <div class="form-group my-1">
-               <label for="name required">Date Work</label>
+               <label class="required">Date Work</label>
                 <div class="input-group">
                   <input class="form-control" placeholder="yyyy-mm-dd"
                         formControlName="date_work" [maxDate]="today" ngbDatepicker #dw="ngbDatepicker">
@@ -323,11 +320,11 @@
               </div>
             </div>
             <div class="form-group my-1">
-              <label for="desc">Time Work</label>
+              <label class="required">Time Work ( Hours )</label>
               <input type="number" formControlName="time_work_per_day" class="form-control form-control-sm">
             </div>
             <div class="form-group my-1">
-              <label for="desc">Comment</label>
+              <label class="required">Comment</label>
               <textarea class="form-control form-control-sm" formControlName="comment" rows="3"></textarea>
             </div>
           </div>
@@ -355,11 +352,11 @@
         <div class="modal-body px-1 py-1">
           <div class="card-body">
             <div class="form-group my-1">
-              <label for="desc">Deadline</label>
+              <label>Deadline</label>
               <input type="text" class="form-control form-control-sm" formControlName="deadline">
             </div>
             <div class="form-group my-1">
-               <label for="name required">New Deadline</label>
+               <label class="required">New Deadline</label>
               <div class="row">
                 <div class="col-md-4">
                   <ngb-timepicker formControlName="time_start" ></ngb-timepicker>
@@ -376,7 +373,7 @@
               </div>
             </div>
             <div class="form-group my-1">
-              <label for="desc">Note</label>
+              <label  class="required">Note</label>
               <textarea class="form-control form-control-sm" formControlName="note" rows="3"></textarea>
             </div>
           </div>

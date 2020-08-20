@@ -20,6 +20,6 @@ import { TeamsRoutingModule } from './teams-routing.module';
     ReactiveFormsModule,
     NgbModule,
     ModalModule.forRoot(),
-  ]
-})
+  ],
+  })
 export class TeamsModule { }

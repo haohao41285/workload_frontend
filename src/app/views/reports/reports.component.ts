@@ -22,6 +22,7 @@ export class ReportsComponent implements OnInit {
 	searchForm : FormGroup;
 	users :any;
 	tasks : any;
+	projects: any;
 
 
   constructor(
@@ -49,7 +50,8 @@ export class ReportsComponent implements OnInit {
   			from : [''],
   			to: [''],
   			id_user: ['all'],
-  			status : ["all"]
+  			status : ["all"],
+  			id_project : ['']
   		});
   	}
 
@@ -62,7 +64,8 @@ export class ReportsComponent implements OnInit {
 	  				this.toastrService.error(res['status'],res['message']);
 	  				return;
 	  			}
-	  			this.users = res;
+	  			this.users = res['users'];
+	  			this.projects = res['projects'];
 	  		},
 	  		error => {
 	  			this.toastrService.error('Error','Get List Failed!');

@@ -24,10 +24,11 @@
 label{
   font-weight: bold;
 }
-.required::after{
-   color: red;
-   content: '*';
-}
+
 .ngb-dp-today > .btn-light {
   background-color: red!important;
+}
+.required:after {
+    content:" *";
+    color: red;
 }

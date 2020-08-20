@@ -17,4 +17,10 @@ export class RolePermissionService {
     		return res;
     	}))
     }
+    update(id,data){
+    	return this.http.patch(`${environment.apiUrl}/permission/${id}`,data)
+    	.pipe(res=>{
+    		return res;
+    	})
+    }
 }

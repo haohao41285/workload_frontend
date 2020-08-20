@@ -12,6 +12,7 @@ import { LogoutComponent } from './views/logout/logout.component';
 
 //Import AuthGuard
 import { AuthGuard } from './_helpers/auth.guard';
+import { RoleGuard } from './_helpers/role.guard';
 
 export const routes: Routes = [
   {
@@ -90,30 +91,37 @@ export const routes: Routes = [
       },
       {
         path: 'tasks',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/tasks/tasks.module').then(m => m.TasksModule)
       },
       {
         path: 'reports',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/reports/reports.module').then(m => m.ReportsModule)
       },
       {
         path: 'trello-board',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/boards/boards.module').then(m => m.BoardsModule)
       },
       {
         path: 'users',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/users/users.module').then(m => m.UsersModule)
       },
       {
         path: 'teams',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/teams/teams.module').then(m => m.TeamsModule)
       },
       {
         path: 'projects',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/projects/projects.module').then(m => m.ProjectsModule)
       },
       {
         path: 'profiles',
+        canLoad: [RoleGuard],
         loadChildren: () => import('./views/profiles/profiles.module').then(m => m.ProfilesModule)
       },
       { path: 'logout', component: LogoutComponent}

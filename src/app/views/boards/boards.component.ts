@@ -155,10 +155,10 @@ export class BoardsComponent implements OnInit {
     this.boardService.getUsers(id).subscribe(res=>{
       if(res['status'] == 'error'){
         this.toastrService.error(res['status'], res['message']);
-        return;
+      }else{
+        this.members = res['members'];
+        this.users = res['users'];
       }
-      this.members = res['members'];
-      this.users = res['users'];
       this.progressBar.completeLoading();
     },
     err=>{

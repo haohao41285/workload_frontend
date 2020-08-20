@@ -10,6 +10,14 @@ export class ProjectsService {
 
   	constructor(private http: HttpClient) { }
 
+
+    public getProject(){
+      return this.http.get(`${environment.apiUrl}/project/`)
+      .pipe(res=>{
+        return res;
+      })
+    }
+
   	public project(data){
   		const httpOptions = {
   			headers: new HttpHeaders({
