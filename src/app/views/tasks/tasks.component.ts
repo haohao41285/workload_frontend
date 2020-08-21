@@ -13,6 +13,7 @@ import { TaskService } from '../../_services/task.service';
 import { BoardService } from '../../_services/board.service';
 import { ProgressBarService } from '../../_services/progress-bar.service';
 import { ProjectsService } from '../../_services/projects.service';
+import { UserService } from '../../_services/user.service';
 
 @Component({
   selector: 'app-tasks',
@@ -44,6 +45,8 @@ export class TasksComponent implements OnInit {
   	idMembers :any;
   	progressing_arr = Array();
   	projects : any;
+  	leader_id = "";
+  	user = JSON.parse(localStorage.getItem('currentUser'));
 
   	time: NgbTimeStruct = {hour: 11, minute: 30, second: 0};
 
@@ -71,7 +74,8 @@ export class TasksComponent implements OnInit {
  		config: NgbTimepickerConfig,
  		private boardService: BoardService,
  		private progressBar: ProgressBarService,
- 		private projectsService: ProjectsService
+ 		private projectsService: ProjectsService,
+ 		private userService: UserService,
 
  	){
 		this.config = {
@@ -94,7 +98,9 @@ export class TasksComponent implements OnInit {
   			time_end : [this.time],
   			idBoard : ['',Validators.required],
   			start_date : [this.calendar.getToday(),Validators.required],
-  			id_project : ['', Validators.required]
+  			id_project : ['', Validators.required],
+  			team : [''],
+  			follower : ['']
   		});
   		this.createSearchForm();
   		this.createUpdateForm();
@@ -103,6 +109,7 @@ export class TasksComponent implements OnInit {
   		this.createLogForm();
   		this.createExtendForm();
   		this.getProjects();
+  		this.getTeamLeader();
   	}
 
   	setProgressingArr(){
@@ -161,6 +168,17 @@ export class TasksComponent implements OnInit {
   			user_id : ['']
   		});
   	}
+  	getTeamLeader(){
+  		var id_leader = this.user.team.id_leader;
+  		this.userService.getOne(id_leader).subscribe(
+  			res=>{
+  				console.log(res);
+  				this.leader_id = res['id_trello'];
+  			}, err=>{
+  				console.log(err);
+  				console.log('Get Leader Error');
+  			})
+  	}
 
   	//Get Projects
   	getProjects(){
@@ -193,6 +211,7 @@ export class TasksComponent implements OnInit {
 				this.list = res['lists'][idBoard];
 				this.idMembers  = res['users'];
 				this.projects = res['projects'];
+				this.cardForm.get('follower').setValue(this.leader_id);
 			},
 			error => {
 				this.toastrService.error('Error','Get Boards, Lists Failed!');
@@ -220,7 +239,10 @@ export class TasksComponent implements OnInit {
 		var end_date = formatDate(this.formatter.format(this.cardForm.get('expired_date').value),'yyy/MM/dd','en');
 		this.data.date_start = start_date+" "+time_start;
 		this.data.due = end_date+" "+time_end+":00";
-		this.data.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
+		this.data.user_id = this.user.id;
+
+		//Add team name to data
+		this.data.team = this.user.team.name;
 
 		this.progressBar.startLoading();
 		//Push task to card Trello
@@ -264,7 +286,7 @@ export class TasksComponent implements OnInit {
 
 	// Get task's(card in trello ) user on database
 	gettask(){
-		var id_user = JSON.parse(localStorage.getItem('currentUser'))['id'];
+		var id_user = this.user.id
 		this.taskService.getUserTask(id_user)
 		.subscribe(
 			res => {
@@ -285,7 +307,7 @@ export class TasksComponent implements OnInit {
 	searchTask(){
 		this.progressBar.startLoading();
 		var data_search = this.searchForm.value;
-		data_search.user_id = JSON.parse(localStorage.getItem('currentUser'))['id'];
+		data_search.user_id = this.user.id;
 		// data_search.token = localStorage.getItem('currentToken');
 		this.taskService.searchTask(data_search)
 		.subscribe(
@@ -427,6 +449,7 @@ export class TasksComponent implements OnInit {
 			this.toastrService.warning('Warning','Choose other time!');
 
 		}else{
+			this.progressBar.startLoading();
 			this.extendForm.get('expired_date').setValue(expired_time);
 			var data = this.extendForm.value;
 			data.old_deadline = old_deadline;
@@ -434,15 +457,18 @@ export class TasksComponent implements OnInit {
 			.subscribe(res=>{
 				if(res['status'] == 'error'){
 					this.toastrService.error(res['status'],res['message']);
-					return;
 				}else{
 					this.toastrService.success(res['sttaus'],res['message']);
 					this.extendModal.hide();
 					// this.extendForm.reset();
-					this.tasks = res['tasks'];
+					if(res['mail'] == '0'){
+						this.tasks = res['tasks'];
+					}
 				}
+				this.progressBar.completeLoading();
 			},err=>{
 				this.toastrService.error('Error','Extend Deadline Failed!');
+				this.progressBar.completeLoading();
 			})
 		}
 	}

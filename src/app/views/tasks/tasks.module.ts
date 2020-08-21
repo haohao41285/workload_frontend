@@ -10,7 +10,6 @@ import { TasksComponent } from './tasks.component';
 import { TasksRoutingModule } from './tasks-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
-
 @NgModule({
   declarations: [TasksComponent],
   imports: [

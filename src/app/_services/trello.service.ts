@@ -41,6 +41,7 @@ export class TrelloService {
 
  		data.token = this.token;
  		data.key = this.key;
+ 		data.idMembers.push(data.follower);
 
  		return this.http.post<any>(this.baseTrelloUrl+`cards/`, data,httpOptions)
  		.pipe(map(res => {

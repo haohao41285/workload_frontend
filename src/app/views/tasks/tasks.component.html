@@ -6,7 +6,7 @@
         	  <form [formGroup]="searchForm" (ngSubmit)="searchTask()" class="form-inline">
               <div class="form-group mt-1  ml-1">
                 <select class="form-control form-control-sm" formControlName="id_project">
-                  <option value="">ALL Project</option>
+                  <option value="">All Project</option>
                   <option *ngFor="let p of projects" value="{{p.id}}">{{p.name}}</option>
                 </select>
               </div>
@@ -123,9 +123,9 @@
             </ngx-datatable-column>
             <ngx-datatable-column name="Action">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               <a href="javascript:void(0)" class="text-primary" (click)="updateModal.show()" (click)="show(row)"><span tooltip="Edit" class="fa fa-edit "></span></a>
-               <a href="javascript:void(0)" class="mf-2 text-danger" (click)="logModal.show()" (click)="showLog(row)" ><span tooltip="Logs" class="fa fa-comments "></span></a>
-               <a href="javascript:void(0)" class="mf-2 text-success" (click)="extendModal.show()" (click)="showExtend(row)" ><span tooltip="Extend" class="fa fa-hourglass-start"></span></a>
+               <a href="javascript:void(0)" class="text-primary ml-2" (click)="updateModal.show()" (click)="show(row)"><span tooltip="Edit" class="fa fa-edit "></span></a>
+               <a href="javascript:void(0)" class="mf-2 text-danger ml-2" (click)="logModal.show()" (click)="showLog(row)" ><span tooltip="Logs" class="fa fa-comments "></span></a>
+               <a href="javascript:void(0)" class="mf-2 text-success ml-2" (click)="extendModal.show()" (click)="showExtend(row)" ><span tooltip="Extend" class="fa fa-hourglass-start"></span></a>
               </ng-template>
             </ngx-datatable-column>
           </ngx-datatable>
@@ -176,20 +176,6 @@
               </select>
             </div>
             <div class="form-group my-1">
-              <label class="required">Assign</label>
-              <ng-select [items]="idMembers"
-                bindLabel="name"
-                bindValue="id_trello"
-                placeholder="Select item"
-                appendTo="body"
-                multiple="true"
-                [searchable]="true" 
-                [clearable]="true"
-                [closeOnSelect]="false"
-                formControlName="idMembers">
-              </ng-select>
-            </div>
-            <div class="form-group my-1">
               <label class="required">Date Start</label>
               <div class="row">
                 <div class="col-md-4">
@@ -222,6 +208,31 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="form-group my-1">
+              <label class="required">Assign</label>
+              <ng-select [items]="idMembers"
+                bindLabel="name"
+                bindValue="id_trello"
+                placeholder="Select Member"
+                appendTo="body"
+                multiple="true"
+                [searchable]="true" 
+                [clearable]="true"
+                [closeOnSelect]="false"
+                formControlName="idMembers">
+              </ng-select>
+            </div>
+            <div class="form-group my-1">
+              <label class="required">Follower</label><i>( Leader is default )</i>
+              <ng-select [items]="idMembers"
+                bindLabel="name"
+                bindValue="id_trello"
+                placeholder="Select Follower"
+                appendTo="body"
+                [searchable]="true"
+                formControlName="follower">
+              </ng-select>
             </div>
             <div class="form-group my-1">
               <label for="desc">Description</label>
@@ -380,7 +391,7 @@
         </div>
         <div class="modal-footer py-1">
           <button type="button" class="btn btn-danger btn-sm" (click)="extendModal.hide()">Close</button>
-          <button type="submit" [disabled]="!extendForm.valid"  class="btn btn-primary btn-sm">Extend</button>
+          <button type="submit" [disabled]="!extendForm.valid"  class="btn btn-primary btn-sm">Send Request</button>
         </div>
       </form>
     </div>

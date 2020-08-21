@@ -36,7 +36,7 @@ export class DefaultLayoutComponent implements OnInit{
       if(navItems[i]['url'] != "/dashboard"){
         if(menu_arr.includes(navItems[i]['url'])){
         }else{
-          navItems.splice( i,1 );
+          navItems.splice( parseInt(i),1 );
         }
       }
     }

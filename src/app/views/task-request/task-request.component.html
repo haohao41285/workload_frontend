@@ -1,0 +1,87 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> <b>Task Information</b>
+        </div>
+        <div class="card-body">
+          <h4 class="">Main Task</h4>
+          <table class="table table-hovered">
+            <tbody>
+              <tr>
+                <td><b>Name</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.name}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Date Start</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.date_start}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Date Expired</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.due}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Progressing</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.progressing}}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <h4 class="">Requested Task</h4>
+          <table class="table table-hovered">
+            <tbody>
+              <tr>
+                <td><b>Name</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.name}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Date Start</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.date_start}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Date Expired</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.due}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Progressing</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.task.progressing}}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

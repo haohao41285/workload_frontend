@@ -124,6 +124,14 @@ export const routes: Routes = [
         canLoad: [RoleGuard],
         loadChildren: () => import('./views/profiles/profiles.module').then(m => m.ProfilesModule)
       },
+      {
+        path: 'task-request',
+        loadChildren: () => import('./views/task-request/task-request.module').then(m => m.TaskRequestModule)
+      },
+      {
+        path: 'test',
+        loadChildren: () => import('./views/test/test.module').then(m => m.TestModule)
+      },
       { path: 'logout', component: LogoutComponent}
     ]
   },

@@ -111,4 +111,11 @@ export class TaskService {
       }))
     }
 
+    getTaskByToken(token){
+      return this.http.get(`${environment.apiUrl}/task/by-token/${token}`)
+      .pipe(map(res=>{
+        return res;
+      }))
+    }
+
 }
