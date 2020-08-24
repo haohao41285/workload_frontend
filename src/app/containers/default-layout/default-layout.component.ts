@@ -38,6 +38,20 @@ export class DefaultLayoutComponent implements OnInit{
         }else{
           navItems.splice( parseInt(i),1 );
         }
+        if(typeof navItems[i]['children'] === 'undefined'){
+        }else{
+          console.log(navItems[i]['url']);
+          for(let c in navItems[i]['children']  ){
+            var c_url = ""+navItems[i]['children'][c]['url'];
+            var p_url = navItems[i]['url'];
+            var ret = c_url.replace(""+p_url,'');
+            if(menu_arr.includes(ret)){
+            }else{
+              navItems[i]['children'].splice( parseInt(c),1 );
+            }
+          }
+        }
+        
       }
     }
     this.menus = navItems;

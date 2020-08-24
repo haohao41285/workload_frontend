@@ -14,10 +14,11 @@ export class ReportsService {
 
 
   public searchReport(data){
+    var currentToken = localStorage.getItem('currentToken');
   	const httpOptions = {
         headers: new HttpHeaders({
             'Content-Type':  'application/json',
-            // 'Content-Type': 'multipart/form-data'
+            'Authorization': currentToken
         })
     };
     return this.http.post<any>(`${environment.apiUrl}/report/search`,data,httpOptions)
@@ -26,10 +27,11 @@ export class ReportsService {
     }))
   }
   public getUsers(data){
+    var currentToken = localStorage.getItem('currentToken');
   	const httpOptions = {
         headers: new HttpHeaders({
             'Content-Type':  'application/json',
-            // 'Content-Type': 'multipart/form-data'
+            'Authorization': currentToken
         })
     };
     return this.http.post<any>(`${environment.apiUrl}/report/get-user`,data,httpOptions)

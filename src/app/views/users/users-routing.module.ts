@@ -15,10 +15,10 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'list'
+        redirectTo: 'users'
       },
       {
-        path: 'list',
+        path: 'users',
         canLoad: [RoleGuard],
         component: UsersComponent,
         data: {

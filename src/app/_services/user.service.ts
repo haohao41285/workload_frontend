@@ -10,16 +10,25 @@ export class UserService {
     constructor(private http: HttpClient) { }
 
     getAll() {
-        return this.http.get(`${environment.apiUrl}/user`)
-        .pipe(map(
-        	res=> {
-        		return res;
-        	}))
+      var currentToken = localStorage.getItem('currentToken');
+      const httpOptions = {
+          headers: new HttpHeaders({
+              'Content-Type':  'application/json',
+              'Authorization': currentToken
+          })
+      };
+      return this.http.get(`${environment.apiUrl}/user`,httpOptions)
+      .pipe(map(
+      	res=> {
+      		return res;
+      	}))
     }
     search(data_search){
+      var currentToken = localStorage.getItem('currentToken');
     	const httpOptions = {
   			headers : new HttpHeaders({
   				'Content-Type' : 'application/json',
+          'Authorization': currentToken
   			})
   		};
   		return this.http.post<any>(`${environment.apiUrl}/user-search`,data_search,httpOptions)

@@ -206,7 +206,7 @@ export const navItems: INavData[] = [
     children: [
       {
         name: 'List',
-        url: '/users/list',
+        url: '/users/users',
         icon: 'icon-user'
       },
       {
@@ -235,9 +235,6 @@ export const navItems: INavData[] = [
     name: 'Reports',
     url: '/reports',
     icon: 'icon-notebook',
-  },
-  {
-    divider: true
   },
   // {
   //   title: true,
