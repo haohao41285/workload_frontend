@@ -131,6 +131,7 @@ export class TasksComponent implements OnInit {
   			id_user : [''],
   			id_task_detail : [''],
   			id_task :[''],
+  			id_trello : ['']
   		})
   	}
 
@@ -338,6 +339,7 @@ export class TasksComponent implements OnInit {
 	}
 	get f(){ return this.updateForm.controls;}
 	show(row){
+		console.log(row);
 		var id_board = row.task.idBoard;
 		this.taskService.show(id_board)
 		.subscribe(res=>{
@@ -388,17 +390,24 @@ export class TasksComponent implements OnInit {
 	update(){
 		var id = this.f.id.value;
 		var data = this.updateForm.value;
+		var user = JSON.parse(localStorage.getItem('currentUser'));
+		data.key = user.key;
+		data.token = user.token;
+		this.progressBar.startLoading();
 		this.taskService.update(id,data)
 		.subscribe(res=>{
+			console.log(res);
 			if(res['status'] == 'error'){
 				this.toastrService.error(res['status'],res['message']);
-				return;
+			}else{
+				this.toastrService.success(res['status'],res['message']);
+				this.tasks = res['tasks'];
+				this.updateModal.hide();
 			}
-			this.toastrService.success(res['status'],res['message']);
-			this.tasks = res['tasks'];
-			this.updateModal.hide();
+			this.progressBar.completeLoading();
 		},err=>{
 			this.toastrService.error('Error','Update Failed!');
+			this.progressBar.completeLoading;
 		})
 	}
 
@@ -407,11 +416,17 @@ export class TasksComponent implements OnInit {
 		this.logForm.get('id_task_detail').setValue(row.id);
 		this.logForm.get('id_user').setValue(row.user_id);
 		this.logForm.get('id_task').setValue(row.task.id);
+		this.logForm.get('id_trello').setValue(row.task.id_trello);
+		console.log(row);
 	}
 	addLog(){
 		var date_work = this.logForm.get('date_work').value;
 		this.logForm.get('date_work').setValue(this.formatter.format(date_work));
 		var data = this.logForm.value;
+		var user = JSON.parse(localStorage.getItem('currentUser'));
+		data.key = user.key;
+		data.token = user.token;
+		console.log(data);
 		this.taskService.addLog(data)
 		.subscribe(res=>{
 			if(res['status']){

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 import { AuthenticationService } from '../../_services/authentication.service';
 
@@ -21,7 +22,8 @@ export class RegisterComponent {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private toastrService: ToastrService,
     ) { 
         // redirect to home if already logged in
         // if (this.authenticationService.currentUserValue) { 
@@ -33,9 +35,11 @@ export class RegisterComponent {
 
     ngOnInit() {
         this.registerForm = this.formBuilder.group({
-            username: ['', Validators.required],
+            name: ['', Validators.required],
             password: ['', Validators.required],
-            email: ['',Validators.required]
+            email: ['',Validators.required],
+            full_name : [''],
+            id_trello : ['empty']
         });
 
         // get return url from route parameters or default to '/'
@@ -50,21 +54,26 @@ export class RegisterComponent {
         }
 
         this.loading = true;
-        this.authenticationService.register(this.f.email.value,this.f.username.value, this.f.password.value)
+        this.authenticationService.register(this.registerForm.value)
             .pipe(first())
             .subscribe(
                 data => {
-                	console.log(data);
                 	if(data.status === 'error'){
-                		alert('error');return;
-                	}
-                    this.router.navigate([this.returnUrl]);
+                        if( typeof(data['message']) == 'string')
+                            this.toastrService.error(data['status'],data['message']);
+                        else{
+                            for(let e in data['message']){
+                                this.toastrService.error(data['status'],data['message'][e]);
+                            }
+                        }
+                	}else{
+                        this.toastrService.success(data['status'],data['message']);
+                        this.router.navigate(['/users/list']);
+                    }
                 },
                 error => {
-                    this.error = error;
-                    this.loading = false;
+                    this.toastrService.error('Error','Register Failed!');
                 });
     }
-
 
 }

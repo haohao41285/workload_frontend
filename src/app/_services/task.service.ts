@@ -118,4 +118,11 @@ export class TaskService {
       }))
     }
 
+    reponseExtendTask(data){
+      return this.http.post(`${environment.apiUrl}/task/response-extend`,data)
+      .pipe(res=>{
+        return res;
+      })  
+    }
+
 }

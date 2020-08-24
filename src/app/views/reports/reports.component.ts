@@ -23,6 +23,9 @@ export class ReportsComponent implements OnInit {
 	users :any;
 	tasks : any;
 	projects: any;
+	logs:any;
+
+	@ViewChild('logModal') public logModal:ModalDirective;
 
 
   constructor(
@@ -77,6 +80,7 @@ export class ReportsComponent implements OnInit {
   		var data  = this.searchForm.value;
   		this.reportService.searchReport(data)
   		.subscribe(res=>{
+  			console.log(res);
   			if(res['status'] == 'error'){
   				this.toastrService.error(res['status'],res['message']);
   			}
@@ -90,7 +94,39 @@ export class ReportsComponent implements OnInit {
   		})
 
   	}
+  	//Logs
+  	showLog(row){
+  		// console.log(row);
+  		var id  = row.id;
+  		this.progressBar.startLoading();
+  		this.reportService.showLog(id).subscribe(
+  			res=>{
+  				console.log(res);
+  				if(res['status'] == 'error'){
+  					this.toastrService.error(res['status'],res['message']);
+  				}else{
+  					// this.toastrService.success(res['status'],res['message']);
+  					this.logs = res;
+  					this.logModal.show();
+  				}
+  				this.progressBar.completeLoading();
+  			},err=>{
+  				console.log(err);
+  				this.toastrService.error('Error','Get Log Failed!');
+  				this.progressBar.completeLoading();
+  			})
+  	}
+  	resetForm(){
+  		this.searchForm.get('name').setValue('');
+  		// this.searchForm.get('from').setValue();
+  		// this.searchForm.get('to').setValue();
+  		this.searchForm.get('status').setValue("all");
+  		this.searchForm.get('id_project').setValue('');
+  		this.fromDate = this.calendar.getPrev(this.calendar.getToday(), 'd', 30);
+    	this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 5);
+    	this.searchReport();
 
+  	}
   	//Datepicker
 	onDateSelection(date: NgbDate) {
 	    if (!this.fromDate && !this.toDate) {

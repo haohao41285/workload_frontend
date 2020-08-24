@@ -37,4 +37,11 @@ export class ReportsService {
     	return res;
     }))
   }
+  showLog(id){
+    return this.http.get(`${environment.apiUrl}/log/${id}`).pipe(map(
+        res=>{
+          return res;
+        })
+      )
+  }
 }

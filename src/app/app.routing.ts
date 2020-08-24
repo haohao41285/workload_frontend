@@ -44,6 +44,7 @@ export const routes: Routes = [
   },
   {
     path: 'register',
+    canActivate: [AuthGuard],
     component: RegisterComponent,
     data: {
       title: 'Register Page'

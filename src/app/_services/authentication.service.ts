@@ -35,16 +35,17 @@ export class AuthenticationService {
                 return user;
             }));
     }
-    register(email: string, name: string, password: string) {
-        return this.http.post<any>(`${environment.apiUrl}/signup`, {email, name, password})
+    register(data) {
+        return this.http.post<any>(`${environment.apiUrl}/signup`, data)
             .pipe(map(user => {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                if(user.status == 'error'){
-                    return user;
-                }
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                this.currentUserSubject.next(user);
                 return user;
+                // store user details and jwt token in local storage to keep user logged in between page refreshes
+                // if(user.status == 'error'){
+                //     return user;
+                // }
+                // localStorage.setItem('currentUser', JSON.stringify(user));
+                // this.currentUserSubject.next(user);
+                // return user;
             }));
     }
 

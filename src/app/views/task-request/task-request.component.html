@@ -2,18 +2,20 @@
   <div class="row">
     <div class="col-lg-12">
       <div class="card">
-        <div class="card-header">
+        <div *ngIf="showTask" class="card-header">
           <i class="fa fa-align-justify"></i> <b>Task Information</b>
         </div>
         <div class="card-body">
-          <h4 class="">Main Task</h4>
-          <table class="table table-hovered">
+          <table *ngIf="showTask" class="table table-hovered">
             <tbody>
+              <tr>
+                <td class="text-primary bg-secondary" colspan="2">Main Task</td>
+              </tr>
               <tr>
                 <td><b>Name</b></td>
                 <td>
                   <span *ngIf="task != null">
-                    {{task.task.name}}
+                    {{task.task_name}}
                   </span>
                 </td>
               </tr>
@@ -21,15 +23,15 @@
                 <td><b>Date Start</b></td>
                 <td>
                   <span *ngIf="task != null">
-                    {{task.task.date_start}}
+                    {{task.date_start}}
                   </span>
                 </td>
               </tr>
               <tr>
                 <td><b>Date Expired</b></td>
-                <td>
+                <td class="text-danger">
                   <span *ngIf="task != null">
-                    {{task.task.due}}
+                    {{task.due}}
                   </span>
                 </td>
               </tr>
@@ -37,49 +39,110 @@
                 <td><b>Progressing</b></td>
                 <td>
                   <span *ngIf="task != null">
-                    {{task.task.progressing}}
+                    {{task.main_progressing}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-primary bg-secondary" colspan="2">Request Task</td>
+              </tr>
+              <tr>
+                <td><b>Progresing</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.progressing}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Requested Expired</b></td>
+                <td class="text-danger">
+                  <span *ngIf="task != null">
+                    {{task.expired}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Note</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.note}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-primary bg-secondary" colspan="2">User</td>
+              </tr>
+              <tr>
+                <td><b>Nickname</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.name}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Fullname</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.full_name}}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Email</b></td>
+                <td>
+                  <span *ngIf="task != null">
+                    {{task.email}}
                   </span>
                 </td>
               </tr>
             </tbody>
           </table>
-          <h4 class="">Requested Task</h4>
-          <table class="table table-hovered">
-            <tbody>
-              <tr>
-                <td><b>Name</b></td>
-                <td>
-                  <span *ngIf="task != null">
-                    {{task.task.name}}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td><b>Date Start</b></td>
-                <td>
-                  <span *ngIf="task != null">
-                    {{task.task.date_start}}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td><b>Date Expired</b></td>
-                <td>
-                  <span *ngIf="task != null">
-                    {{task.task.due}}
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td><b>Progressing</b></td>
-                <td>
-                  <span *ngIf="task != null">
-                    {{task.task.progressing}}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        </div>
+        <h4 class="text-center text-danger" *ngIf="showError">
+          {{message}}
+        </h4>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showTask" class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div *ngIf="showTask" class="card-header">
+          <i class="fa fa-align-justify"></i> <b>Response</b>
+        </div>
+        <div class="card-body">
+          <form [formGroup]='extendForm' (ngSubmit)="submit()">
+            <div class="form-group my-1">
+              <label class="required">New Expired</label><i class="text-danger">( Skip, If reject or no change expired )</i>
+              <div class="row">
+                <div class="col-md-4">
+                  <ngb-timepicker formControlName="time" ></ngb-timepicker>
+                </div>
+                <div class="col-md-8">
+                    <div class="input-group">
+                      <input class="form-control" placeholder="yyyy-mm-dd"
+                            formControlName="expired" ngbDatepicker #de="ngbDatepicker">
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary fa fa-calendar calendar" (click)="de.toggle()" type="button"></button>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group my-1">
+              <label>Message</label>
+              <textarea class="form-control form-control-sm" cols="3" formControlName="message" placeholder="Too late"></textarea>
+            </div>
+            <div class="form-group my-1">
+              <button type="button" (click)="reject()" class="btn btn-sm btn-danger">Reject</button>
+              <button type=submit class="btn btn-sm btn-primary">Accept</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

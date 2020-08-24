@@ -80,7 +80,7 @@
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> <b>Users</b>
-          <!-- <a href="#" title="" class="float-right"><button type="button" class="btn btn-sm btn-primary text-white"><span class="fa fa-plus"></span> Add User</button></a> -->
+          <a  [routerLink]="['/register']" title="" class="float-right"><button type="button" class="btn btn-sm btn-primary text-white"><span class="fa fa-plus"></span> Add User</button></a>
         </div>
         <div class="card-body">
           <ngx-datatable class="bootstrap" [rows]="users" [limit]="10" [columnMode]="'force'"

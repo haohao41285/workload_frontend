@@ -67,14 +67,14 @@ export class BoardService {
         return res;
       }))
     }
-    getList(idBoard){
-      return this.http.get(`${environment.apiUrl}/board/${idBoard}/lists`)
+    getList(data){
+      return this.http.post(`${environment.apiUrl}/board/lists`,data)
       .pipe(res=>{
         return res;
       })
     }
-    getUsers(idBoard){
-      return this.http.get(`${environment.apiUrl}/board/${idBoard}/users`)
+    getUsers(data){
+      return this.http.post(`${environment.apiUrl}/board/users`,data)
       .pipe(res=>{
         return res;
       })

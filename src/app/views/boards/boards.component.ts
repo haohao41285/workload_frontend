@@ -60,31 +60,38 @@ export class BoardsComponent implements OnInit {
     this.progressBar.startLoading();
 		if (this.boardForm.get('url').value.indexOf('https://trello.com/') > -1)
 	  {
-		this.boardService.createNewBoard(this.boardForm.value)
-  		.subscribe(
-  			res => {
-  				if(res['status'] == 'error'){
-  					this.toastrService.error(res['status'],res['message']);
-  					return;
-  				}else if(res['status'] == 'warning'){
-  					this.toastrService.warning(res['status'],res['message']);
-  				}else{
-  					this.toastrService.success(res['status'],res['message']);
-  					this._location.forward();
-            this.boards = res['boards'];
-  				}
-          this.progressBar.completeLoading();
-  			},
-  			error=> {
-          this.toastrService.error('Error','Add New Board Failed!');
-          this.progressBar.completeLoading();
-  			}
-  		);
-	}else{
-		this.toastrService.error('Error','Enter a valid Trello Url');
-    this.progressBar.completeLoading();
-		return;
-	}
+      var user = JSON.parse(localStorage.getItem('currentUser'));
+      var data = this.boardForm.value;
+      data.token = user.token;
+      data.key = user.key;
+
+  		this.boardService.createNewBoard(data)
+    		.subscribe(
+    			res => {
+            console.log(res);
+    				if(res['status'] == 'error'){
+    					this.toastrService.error(res['status'],res['message']);
+    				}else if(res['status'] == 'warning'){
+    					this.toastrService.warning(res['status'],res['message']);
+    				}else{
+    					this.toastrService.success(res['status'],res['message']);
+    					this._location.forward();
+              this.boards = res['boards'];
+    				}
+            this.progressBar.completeLoading();
+    			},
+    			error=> {
+            console.log(error);
+            
+            this.toastrService.error('Error','Add New Board Failed!');
+            this.progressBar.completeLoading();
+    			}
+    		);
+  	}else{
+  		this.toastrService.error('Error','Enter a valid Trello Url');
+      this.progressBar.completeLoading();
+  		return;
+  	}
 	}
 
 	updateListTrello(idBoard){
@@ -128,8 +135,14 @@ export class BoardsComponent implements OnInit {
   }
 
   getList(id){
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    var data = {
+      id : id,
+      token: user.token,
+      key: user.key
+    };
     this.progressBar.startLoading();
-    this.boardService.getList(id).subscribe(res=>{
+    this.boardService.getList(data).subscribe(res=>{
       if(res['status'] == 'error'){
         this.toastrService.error(res['status'],res['message']);
       }else{
@@ -152,7 +165,15 @@ export class BoardsComponent implements OnInit {
     this.userModal.show();
     this.progressBar.startLoading();
 
-    this.boardService.getUsers(id).subscribe(res=>{
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+
+    var data = {
+      id : id,
+      token: user.token,
+      key : user.key
+    };
+
+    this.boardService.getUsers(data).subscribe(res=>{
       if(res['status'] == 'error'){
         this.toastrService.error(res['status'], res['message']);
       }else{

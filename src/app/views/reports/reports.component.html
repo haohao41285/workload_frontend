@@ -80,7 +80,7 @@
               </div>
               <div class="form-group mt-1 ml-1">
                 <button type="submit"  [disabled]="!searchForm.valid" class="btn btn-sm btn-primary mx-1"><i class="fa fa-search"></i> Search</button>
-                <button type="reset" [disabled]="!searchForm.valid" (click)="resetForm()" class="btn btn-sm btn-danger mx-1"><i class="fa fa-refresh"></i> Reset</button>
+                <button type="button" [disabled]="!searchForm.valid" (click)="resetForm()" class="btn btn-sm btn-danger mx-1"><i class="fa fa-refresh"></i> Reset</button>
               </div>
                 
             </form>
@@ -97,11 +97,16 @@
           <i class="fa fa-tasks"></i> <b>Tasks</b> 
         </div>
         <div class="card-body">
-          <ngx-datatable class="bootstrap" [rows]="tasks" [limit]="10" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" [rowHeight]="50">
+          <ngx-datatable class="bootstrap" [rows]="tasks" [limit]="10" [columnMode]="'fixed'"
+            [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true" [rowHeight]="50">
             <ngx-datatable-column name="Name">
               <ng-template let-row="row" ngx-datatable-cell-template>
                {{row.task.name}}
+              </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="User">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               {{row.user.name}}
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column name="Dealine">
@@ -142,9 +147,54 @@
                {{row.extend.length}}
               </ng-template>
             </ngx-datatable-column>
+            <ngx-datatable-column name="Actions">
+              <ng-template let-row="row" ngx-datatable-cell-template>
+               <a href="javascript:void(0)" (click)="showLog(row)"><span  tooltip="Logs" class="fa fa-comments "></span></a>
+                <!-- <a href="javascript:void(0)" class="ml-2"><span (click)="passwordModal.show()" tooltip="Change Password" (click)="showUpdatePass(row)" class="icon-ghost text-success"></span></a> -->
+              </ng-template>
+            </ngx-datatable-column>
           </ngx-datatable>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- Logs Modal -->
+<div bsModal #logModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Logs</h4>
+        <button type="button" class="close" (click)="logModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body px-1 py-1">
+        <div class="card-body">
+          <table class="table table-hovered table-tripped">
+            <thead>
+              <tr>
+                <th>Date Work</th>
+                <th>Time Work</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let l of logs">
+                <td>{{l.date_work}}</td>
+                <td>{{l.time_work_per_day}}</td>
+                <td>{{l.comment}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-danger btn-sm" (click)="logModal.hide()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Logs Modal -->
