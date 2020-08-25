@@ -68,7 +68,7 @@ export class RegisterComponent {
                         }
                 	}else{
                         this.toastrService.success(data['status'],data['message']);
-                        this.router.navigate(['/users/list']);
+                        this.router.navigate(['/users/users']);
                     }
                 },
                 error => {
