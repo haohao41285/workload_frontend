@@ -24,8 +24,10 @@ export class ReportsComponent implements OnInit {
 	tasks : any;
 	projects: any;
 	logs:any;
+  expireds: any;
 
 	@ViewChild('logModal') public logModal:ModalDirective;
+  @ViewChild('expiredModal') public expiredModal:ModalDirective;
 
 
   constructor(
@@ -80,7 +82,6 @@ export class ReportsComponent implements OnInit {
   		var data  = this.searchForm.value;
   		this.reportService.searchReport(data)
   		.subscribe(res=>{
-  			console.log(res);
   			if(res['status'] == 'error'){
   				this.toastrService.error(res['status'],res['message']);
   			}
@@ -96,22 +97,18 @@ export class ReportsComponent implements OnInit {
   	}
   	//Logs
   	showLog(row){
-  		// console.log(row);
   		var id  = row.id;
   		this.progressBar.startLoading();
   		this.reportService.showLog(id).subscribe(
   			res=>{
-  				console.log(res);
   				if(res['status'] == 'error'){
   					this.toastrService.error(res['status'],res['message']);
   				}else{
-  					// this.toastrService.success(res['status'],res['message']);
   					this.logs = res;
   					this.logModal.show();
   				}
   				this.progressBar.completeLoading();
   			},err=>{
-  				console.log(err);
   				this.toastrService.error('Error','Get Log Failed!');
   				this.progressBar.completeLoading();
   			})
@@ -127,6 +124,26 @@ export class ReportsComponent implements OnInit {
     	this.searchReport();
 
   	}
+    calculateTime(row){
+      var time_work = 0;
+      for(let t in row.logs){
+          time_work += parseInt(row.logs[t]['time_work_per_day']);
+      }
+      return time_work;
+    }
+    calculateExtendExpired(row){
+      var  count = 0;
+      for(let e in row.extend){
+        if(row.extend[e]['status'] == 1){
+          count += 1;
+        }
+      }
+      return count;
+    }
+    showLogExpired(row){
+      console.log(row);
+      this.expireds = row.extend;
+    }
   	//Datepicker
 	onDateSelection(date: NgbDate) {
 	    if (!this.fromDate && !this.toDate) {

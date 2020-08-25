@@ -134,7 +134,7 @@
             </ngx-datatable-column>
             <ngx-datatable-column name="Time Work (Hours)">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               <span *ngFor="let t of row.logs">{{t.time_work_per_day}}</span>
+               {{calculateTime(row)}}
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column name="Total Time Work (Hours)">
@@ -144,13 +144,13 @@
             </ngx-datatable-column>
             <ngx-datatable-column name="Dealine Times">
               <ng-template let-row="row" ngx-datatable-cell-template>
-               {{row.extend.length}}
+               {{calculateExtendExpired(row)}}
               </ng-template>
             </ngx-datatable-column>
             <ngx-datatable-column name="Actions">
               <ng-template let-row="row" ngx-datatable-cell-template>
                <a href="javascript:void(0)" (click)="showLog(row)"><span  tooltip="Logs" class="fa fa-comments "></span></a>
-                <!-- <a href="javascript:void(0)" class="ml-2"><span (click)="passwordModal.show()" tooltip="Change Password" (click)="showUpdatePass(row)" class="icon-ghost text-success"></span></a> -->
+                <a href="javascript:void(0)" class="ml-2"><span (click)="expiredModal.show()" tooltip="Show Logs Expired" (click)="showLogExpired(row)" class="fa fa-hourglass-end text-success"></span></a>
               </ng-template>
             </ngx-datatable-column>
           </ngx-datatable>
@@ -198,3 +198,46 @@
   </div>
 </div>
 <!-- End Logs Modal -->
+
+<!-- expired Modal -->
+<div bsModal #expiredModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-info" role="document">
+    <div class="modal-content">
+      <div class="modal-header py-1">
+        <h4 class="modal-title">Logs</h4>
+        <button type="button" class="close" (click)="expiredModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body px-1 py-1">
+        <div class="card-body">
+          <table class="table table-hovered table-tripped">
+            <thead>
+              <tr>
+                <th>Expired</th>
+                <th>Note</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of expireds">
+                <td>{{e.expired}}</td>
+                <td>{{e.note}}</td>
+                <td>
+                  <!-- {{e.status}} -->
+                  <span  *ngIf="e.status == 0" class="badge badge-success">NEW</span>
+                  <span  *ngIf="e.status == 1" class="badge badge-warning">ACCEPT</span>
+                  <span  *ngIf="e.status == 2" class="badge badge-danger">REJECT</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer py-1">
+          <button type="button" class="btn btn-danger btn-sm" (click)="expiredModal.hide()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End expired Modal -->
